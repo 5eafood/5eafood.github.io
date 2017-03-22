@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>finecms代码审计 | SeaFood&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="finecms代码审计
+后台sql注入搜索功能的$kw变量都没进入过滤函数用的类似like &amp;quot;%$kw%&amp;quot;语句但前台的搜索使用双引号&amp;quot;包的似乎是被codeigniter的xss保护滤掉了=_= 然而后台几个搜索是用单引号&amp;#39;可以利用毕竟后台就比较鸡肋了      
+FineCMS2.10\controllers\admin\ContentController.p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="finecms代码审计">
+<meta property="og:url" content="https://5eafood.github.io/2017/03/22/finecms/index.html">
+<meta property="og:site_name" content="SeaFood's blog">
+<meta property="og:description" content="finecms代码审计
+后台sql注入搜索功能的$kw变量都没进入过滤函数用的类似like &amp;quot;%$kw%&amp;quot;语句但前台的搜索使用双引号&amp;quot;包的似乎是被codeigniter的xss保护滤掉了=_= 然而后台几个搜索是用单引号&amp;#39;可以利用毕竟后台就比较鸡肋了      
+FineCMS2.10\controllers\admin\ContentController.p">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms1.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms2.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms3.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms4.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms5.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms6.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms7.png">
+<meta property="og:image" content="https://5eafood.github.io/images/finecms/finecms8.png">
+<meta property="og:updated_time" content="2017-03-22T15:16:29.700Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="finecms代码审计">
+<meta name="twitter:description" content="finecms代码审计
+后台sql注入搜索功能的$kw变量都没进入过滤函数用的类似like &amp;quot;%$kw%&amp;quot;语句但前台的搜索使用双引号&amp;quot;包的似乎是被codeigniter的xss保护滤掉了=_= 然而后台几个搜索是用单引号&amp;#39;可以利用毕竟后台就比较鸡肋了      
+FineCMS2.10\controllers\admin\ContentController.p">
+<meta name="twitter:image" content="https://5eafood.github.io/images/finecms/finecms1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="SeaFood&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">SeaFood&#39;s blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">es muss sein? es muss sein!</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Søk"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://5eafood.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-finecms" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/22/finecms/" class="article-date">
+  <time datetime="2017-03-22T15:14:40.000Z" itemprop="datePublished">2017-03-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      finecms代码审计
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="finecms代码审计"><a href="#finecms代码审计" class="headerlink" title="finecms代码审计"></a>finecms代码审计</h1><hr>
+<h1 id="后台sql注入"><a href="#后台sql注入" class="headerlink" title="后台sql注入"></a>后台sql注入</h1><p>搜索功能的$kw变量都没进入过滤函数用的类似<code>like &quot;%$kw%&quot;</code>语句但前台的搜索使用双引号<code>&quot;</code>包的<br>似乎是被codeigniter的xss保护滤掉了=_= 然而后台几个搜索是用单引号<code>&#39;</code>可以利用毕竟后台就比较鸡肋了      </p>
+<p><code>FineCMS2.10\controllers\admin\ContentController.php</code><br><img src="images/finecms/finecms1.png" alt=""></p>
+<p><code>FineCMS2.10\controllers\admin\MemberController.php</code><br><img src="images/finecms/finecms2.png" alt=""></p>
+<p><code>FineCMS2.10\controllers\admin\RelatedlinkController.php</code><br><img src="images/finecms/finecms3.png" alt=""></p>
+<p><img src="images/finecms/finecms4.png" alt=""></p>
+<p>投了补天没过因为后台漏洞是不行的没看清漏洞要求QAQ</p>
+<h1 id="恶意文件上传"><a href="#恶意文件上传" class="headerlink" title="恶意文件上传"></a>恶意文件上传</h1><p><code>controllers\AttachmentController.php</code><br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filesAction</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">$this</span>-&gt;memberCheck();</div><div class="line">        $setting = urldecode(<span class="keyword">$this</span>-&gt;get(<span class="string">'setting'</span>));</div><div class="line">        <span class="keyword">list</span>($type, $size) = explode(<span class="string">'|'</span>, $setting);</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">empty</span>($type) || <span class="keyword">empty</span>($size)) &#123;</div><div class="line">            <span class="keyword">$this</span>-&gt;attMsg(lang(<span class="string">'att-10'</span>));</div><div class="line">        &#125;</div><div class="line">        $type = base64_decode($type);</div><div class="line">        $data = <span class="string">''</span>;</div><div class="line">        $_type = explode(<span class="string">','</span>, $type);</div><div class="line">        <span class="keyword">foreach</span> ($_type <span class="keyword">as</span> $t) &#123;</div><div class="line">            $data.= <span class="string">'*.'</span> . $t . <span class="string">';'</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">$this</span>-&gt;view-&gt;assign(<span class="keyword">array</span>(</div><div class="line">            <span class="string">'size'</span> =&gt; (int)$size,</div><div class="line">            <span class="string">'type'</span> =&gt; $type,</div><div class="line">            <span class="string">'data'</span> =&gt; $data,</div><div class="line"><span class="string">'admin'</span> =&gt; <span class="keyword">$this</span>-&gt;getAdmin(),</div><div class="line">            <span class="string">'filesize'</span> =&gt; <span class="number">1024</span> * $size, <span class="comment">//转换成MB</span></div><div class="line">            <span class="string">'sessionid'</span> =&gt; session_id(),</div><div class="line"><span class="string">'document'</span> =&gt; <span class="keyword">$this</span>-&gt;get(<span class="string">'document'</span>)</div><div class="line">        ));</div><div class="line">        <span class="keyword">$this</span>-&gt;view-&gt;display(<span class="string">'../admin/attachment_swfupload'</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p><code>$type</code>参数是post可控的上传文件后缀就是<code>$type</code>的base64解码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ext = $upload-&gt;fileext();</div><div class="line"><span class="keyword">if</span> (stripos($ext, <span class="string">'php'</span>) !== <span class="keyword">FALSE</span></div><div class="line">|| stripos($ext, <span class="string">'asp'</span>) !== <span class="keyword">FALSE</span></div><div class="line">|| stripos($ext, <span class="string">'aspx'</span>) !== <span class="keyword">FALSE</span></div><div class="line">) &#123;</div><div class="line"><span class="keyword">return</span> <span class="keyword">array</span>(<span class="string">'result'</span> =&gt; <span class="string">'文件格式被系统禁止'</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>后缀名只做了基础的黑名单限制但在ubuntu和debian下的lamp可以解析<strong>pht</strong>和<strong>phtml</strong>为php文件        </p>
+<p>我们可以上传.pht文件getshell<br><img src="images/finecms/finecms5.png" alt=""><br><code>emlwLHJhcg==</code>为<code>&quot;zip,rar&quot;.encode(base64)</code>我们将他改为pht的base64<br><img src="images/finecms/finecms6.png" alt=""><br><img src="images/finecms/finecms7.png" alt=""></p>
+<p>xp下无法解析pht但kali下可以<br><img src="images/finecms/finecms8.png" alt=""></p>
+<p>这个投的补天结果被人先投了TAT其实我很早就找到了但忘记提交了TAT</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://5eafood.github.io/2017/03/22/finecms/" data-id="cj0l46te30002yg101qiroata" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/22/Some-Notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          笔记
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Arkiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Siste innlegg</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/03/22/RPO/">RPO (Relative Path Overwrite) 相对路径覆盖</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/22/Some-Notes/">笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/22/finecms/">finecms代码审计</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 SeaFood<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
