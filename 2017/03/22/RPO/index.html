@@ -6,23 +6,20 @@
   <title>RPO (Relative Path Overwrite) 相对路径覆盖 | SeaFood&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="RPO (Relative Path Overwrite) 相对路径覆盖
-什么RPORPO就是一种利用服务端与浏览器之间对 url编码 的处理方式不同所发起的攻击可以导致Web页面引入非法的css文件和javascript文件导致xss        
-RPO的原理我们访问http://127.0.0.1/rpo/1/2/4/example.php, 当页面以这种方式引入css或js文件时&amp;lt;">
+什么RPORPO就是一种利用服务端与浏览器之间对 url编码 的处理方式不同所发起的攻击可以导致Web页面引入非法的css文件和javascript文件导致xss">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RPO (Relative Path Overwrite) 相对路径覆盖">
 <meta property="og:url" content="https://5eafood.github.io/2017/03/22/RPO/index.html">
 <meta property="og:site_name" content="SeaFood's blog">
 <meta property="og:description" content="RPO (Relative Path Overwrite) 相对路径覆盖
-什么RPORPO就是一种利用服务端与浏览器之间对 url编码 的处理方式不同所发起的攻击可以导致Web页面引入非法的css文件和javascript文件导致xss        
-RPO的原理我们访问http://127.0.0.1/rpo/1/2/4/example.php, 当页面以这种方式引入css或js文件时&amp;lt;">
+什么RPORPO就是一种利用服务端与浏览器之间对 url编码 的处理方式不同所发起的攻击可以导致Web页面引入非法的css文件和javascript文件导致xss">
 <meta property="og:image" content="https://5eafood.github.io/images/rpo/rpo1.png">
 <meta property="og:image" content="https://5eafood.github.io/images/rpo/rpo2.png">
-<meta property="og:updated_time" content="2017-03-22T15:18:17.496Z">
+<meta property="og:updated_time" content="2017-03-22T15:30:31.869Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RPO (Relative Path Overwrite) 相对路径覆盖">
 <meta name="twitter:description" content="RPO (Relative Path Overwrite) 相对路径覆盖
-什么RPORPO就是一种利用服务端与浏览器之间对 url编码 的处理方式不同所发起的攻击可以导致Web页面引入非法的css文件和javascript文件导致xss        
-RPO的原理我们访问http://127.0.0.1/rpo/1/2/4/example.php, 当页面以这种方式引入css或js文件时&amp;lt;">
+什么RPORPO就是一种利用服务端与浏览器之间对 url编码 的处理方式不同所发起的攻击可以导致Web页面引入非法的css文件和javascript文件导致xss">
 <meta name="twitter:image" content="https://5eafood.github.io/images/rpo/rpo1.png">
   
     <link rel="alternate" href="/atom.xml" title="SeaFood&#39;s blog" type="application/atom+xml">
@@ -99,7 +96,7 @@ RPO的原理我们访问http://127.0.0.1/rpo/1/2/4/example.php, 当页面以这�
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="RPO-Relative-Path-Overwrite-相对路径覆盖"><a href="#RPO-Relative-Path-Overwrite-相对路径覆盖" class="headerlink" title="RPO (Relative Path Overwrite) 相对路径覆盖"></a>RPO (Relative Path Overwrite) 相对路径覆盖</h1><hr>
-<h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss        </p>
+<h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss<br><a id="more"></a></p>
 <h2 id="RPO的原理"><a href="#RPO的原理" class="headerlink" title="RPO的原理"></a>RPO的原理</h2><p>我们访问<code>http://127.0.0.1/rpo/1/2/4/example.php</code>, 当页面以这种方式引入css或js文件时<br><code>&lt;link href=&quot;../../style.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</code><br>浏览器加载的是<code>http://127.0.0.1/rpo/1/style.css</code>         </p>
 <p>但如果将url改为<code>http://127.0.0.1/rpo/1%2f2/4/example.php</code>,服务器会解码%2f为’/‘<br>继续访问<code>http://127.0.0.1/rpo/1/2/4/example.php</code>而浏览器这会将<code>/1%2f2/</code>最为一段路径<br>加载<code>http://127.0.0.1/rpo/style.css</code></p>
 <p>利用RPO需要Web页面以<strong>相对路径</strong>的css或js文件<br>需要注意的是apache要开启url自动解码需要在配置文件中加入<code>AllowEncodedSlashes On</code></p>
@@ -119,7 +116,7 @@ RPO的原理我们访问http://127.0.0.1/rpo/1/2/4/example.php, 当页面以这�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://5eafood.github.io/2017/03/22/RPO/" data-id="cj0l4fsum0000dp1091g3f3nz" class="article-share-link">Share</a>
+      <a data-url="https://5eafood.github.io/2017/03/22/RPO/" data-id="cj0l4lwlq0000pi109zvbtq3f" class="article-share-link">Share</a>
       
       
     </footer>
