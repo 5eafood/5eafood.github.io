@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://5eafood.github.io/"/>
-  <updated>2017-03-22T18:10:34.000Z</updated>
+  <updated>2017-03-22T18:34:27.000Z</updated>
   <id>https://5eafood.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://5eafood.github.io/2017/03/22/RPO/"/>
     <id>https://5eafood.github.io/2017/03/22/RPO/</id>
     <published>2017-03-22T15:14:48.000Z</published>
-    <updated>2017-03-22T18:10:34.000Z</updated>
+    <updated>2017-03-22T18:34:27.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="RPO-Relative-Path-Overwrite-相对路径覆盖"><a href="#RPO-Relative-Path-Overwrite-相对路径覆盖" class="headerlink" title="RPO (Relative Path Overwrite) 相对路径覆盖"></a>RPO (Relative Path Overwrite) 相对路径覆盖</h1><hr>
 <h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss<br><a id="more"></a></p>
@@ -31,7 +31,7 @@
 <p>如果我们能得知上传文件路径通过RPO让Web页面用js解析我们上传的文件chrome不能将图片解析为js但可以将类似txt,doc,rar解析为js就能触发反射性xss<br>但这样利用局限很大要求我们能控制上传文件的文件名和文件目录名</p>
 <h2 id="引入js文件攻击-2"><a href="#引入js文件攻击-2" class="headerlink" title="引入js文件攻击 (2)"></a>引入js文件攻击 (2)</h2><p>如果网站有上传和下载功能<br>页面以类似这种方式引入js文件时<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.js&quot;&gt;&lt;/script&gt;</code><br>我们访问<code>http://127.0.0.1/rpo/download.php/..%2findex.php</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/rpo/index.php</div><div class="line">正常加载应 http://127.0.0.1/rpo/js/jquery.js</div><div class="line">浏览器 http://127.0.0.1/rpo/download.php/..%2findex.php</div><div class="line">加载 http://127.0.0.1/rpo/download.php/js/jquery.js</div></pre></td></tr></table></figure>
-<p><code>http://127.0.0.1/rpo/download.php</code>下载的正是我们上传的恶意文件<br><img src="images/rpo/rpo1.png" alt=""></p>
+<p><code>http://127.0.0.1/rpo/download.php</code>下载的正是我们上传的恶意文件<br><img src="rpo/rpo1.png" alt=""></p>
 <h2 id="引入恶意css文件攻击IE"><a href="#引入恶意css文件攻击IE" class="headerlink" title="引入恶意css文件攻击IE"></a>引入恶意css文件攻击IE</h2><p>当页面中提供类似搜索功能,能把搜索的字符串打印出来<br>页面以类似这种方式引入css文件时<br><code>&lt;link href=&quot;../../styles.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</code><br><code>http://127.0.0.1/ci/index.php/welcome/index/(string)</code>能打印搜索的字符串      </p>
 <p>我们访问<br><code>http://127.0.0.1/ci/index.php/welcome/index/{}*{background:red}/..%2f..%2f..%2f../rpo/example.html</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/ci/rpo/example.html</div><div class="line">正常加载应 http://127.0.0.1/styles.css</div><div class="line">浏览器 http://127.0.0.1/ci/index.php/welcome/index/&#123;&#125;*&#123;background:red&#125;/..%2f..%2f..%2f../rpo/example.html</div><div class="line">加载 http://127.0.0.1/ci/index.php/welcome/index/&#123;&#125;*&#123;background:red&#125;</div></pre></td></tr></table></figure></p>
 <p><code>http://127.0.0.1/ci/index.php/welcome/index/{}*{background:red}</code>此页面内的内容则包含了我们的恶意css代码浏览器忽视其他无关的内容正常执行</p>
