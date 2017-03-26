@@ -3,13 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>SeaFood&#39;s blog</title>
+  <title>ssrf | SeaFood&#39;s blog</title>
   <meta name="author" content="SeaFood">
+  
+  <meta name="description" content="ssrf小结
+ssrf的发现php123file_get_contents()  默认不支持gopher等协议fsockopen() 极少使用curl_exec() 默认不会302跳转 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, True);可开启转跳
+pyth">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="ssrf"/>
   <meta property="og:site_name" content="SeaFood&#39;s blog"/>
 
   
@@ -43,8 +47,7 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -54,7 +57,7 @@
       
       
   
-    <h1 class="title"><a href="/2017/03/26/ssrf/">ssrf</a></h1>
+    <h1 class="title">ssrf</h1>
   
 
     </header>
@@ -90,42 +93,6 @@
       
         
         
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-03-22T15:14:48.000Z"><a href="/2017/03/22/Some-Notes/">2017-03-22</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/03/22/Some-Notes/">笔记</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><hr>
-<p>一些会用到的payload收集起来避免临时去找不定期更新</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/03/22/Some-Notes/#more" class="more-link">Read More</a>
-          </div>
-        
         
       
       <div class="clearfix"></div>
@@ -134,53 +101,13 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">Kommentare</h1>
 
-
-  <article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-03-22T15:14:48.000Z"><a href="/2017/03/22/RPO/">2017-03-22</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/03/22/RPO/">RPO (Relative Path Overwrite) 相对路径覆盖</a></h1>
-  
+</section>
 
-    </header>
-    <div class="entry">
-      
-        <h1 id="RPO-Relative-Path-Overwrite-相对路径覆盖"><a href="#RPO-Relative-Path-Overwrite-相对路径覆盖" class="headerlink" title="RPO (Relative Path Overwrite) 相对路径覆盖"></a>RPO (Relative Path Overwrite) 相对路径覆盖</h1><hr>
-<h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/03/22/RPO/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-<nav id="pagination">
-  
-  
-    <a href="/page/2/" class="alignright next">Nächste Seite</a>
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</div></div>
     <aside id="sidebar" class="alignright">
   
 
