@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://5eafood.github.io/"/>
-  <updated>2017-03-26T14:30:01.337Z</updated>
+  <updated>2017-03-26T14:34:01.289Z</updated>
   <id>https://5eafood.github.io/</id>
   
   <author>
@@ -14,6 +14,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>pwnhub writeup</title>
+    <link href="https://5eafood.github.io/2017/03/26/pwnhub-writeup/"/>
+    <id>https://5eafood.github.io/2017/03/26/pwnhub-writeup/</id>
+    <published>2017-03-26T14:33:21.000Z</published>
+    <updated>2017-03-26T14:34:01.289Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="pwnhub-wp-大物必须过"><a href="#pwnhub-wp-大物必须过" class="headerlink" title="pwnhub wp 大物必须过"></a>pwnhub wp 大物必须过</h1><p>刚看的<strong>RPO (Relative Path Overwrite) 相对路径覆盖</strong>就被人用来出题了蛮放上来凑个数</p>
+<p><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a></p>
+<p>原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问<code>http://domain/1%2f2.php</code>时服务器会返回<code>http://domain/1/2.php</code>的内容而浏览器则会认为<code>1%2f2.php</code>为一个文件</p>
+<p>在这题的<code>52.80.19.55/classes.php</code>下是这样引入css的</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"../../classes.css"</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>如果我们访问<code>http://52.80.19.55/user.php/341/a/b/..%2f..%2f..%2f..%2fclasses.php</code></p>
+<p>服务器返回的是<code>http://52.80.19.55/classes.php</code></p>
+<p>而浏览器认为<code>..%2f..%2f..%2f..%2fclasses.php</code>是一个文件则引入的css是</p>
+<p><code>http://52.80.19.55/user.php/341/classes.css</code>即<code>http://52.80.19.55/user.php/341</code></p>
+<p>我们只要注册时在Your study vow里写上我们要执行的css<code>{}*{background-image:url(url)}</code>然后把上面的url通过bug report发出去之后收到的头里就有flag了<del>忘记截图了</del></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;pwnhub-wp-大物必须过&quot;&gt;&lt;a href=&quot;#pwnhub-wp-大物必须过&quot; class=&quot;headerlink&quot; title=&quot;pwnhub wp 大物必须过&quot;&gt;&lt;/a&gt;pwnhub wp 大物必须过&lt;/h1&gt;&lt;p&gt;刚看的&lt;strong&gt;RPO (Re
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>ssrf</title>
@@ -58,6 +86,42 @@
   </entry>
   
   <entry>
+    <title>RPO (Relative Path Overwrite) 相对路径覆盖</title>
+    <link href="https://5eafood.github.io/2017/03/22/RPO/"/>
+    <id>https://5eafood.github.io/2017/03/22/RPO/</id>
+    <published>2017-03-22T15:14:48.000Z</published>
+    <updated>2017-03-22T18:44:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="RPO-Relative-Path-Overwrite-相对路径覆盖"><a href="#RPO-Relative-Path-Overwrite-相对路径覆盖" class="headerlink" title="RPO (Relative Path Overwrite) 相对路径覆盖"></a>RPO (Relative Path Overwrite) 相对路径覆盖</h1><hr>
+<h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss<br><a id="more"></a></p>
+<h2 id="RPO的原理"><a href="#RPO的原理" class="headerlink" title="RPO的原理"></a>RPO的原理</h2><p>我们访问<code>http://127.0.0.1/rpo/1/2/4/example.php</code>, 当页面以这种方式引入css或js文件时<br><code>&lt;link href=&quot;../../style.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</code><br>浏览器加载的是<code>http://127.0.0.1/rpo/1/style.css</code>         </p>
+<p>但如果将url改为<code>http://127.0.0.1/rpo/1%2f2/4/example.php</code>,服务器会解码%2f为’/‘<br>继续访问<code>http://127.0.0.1/rpo/1/2/4/example.php</code>而浏览器这会将<code>/1%2f2/</code>最为一段路径<br>加载<code>http://127.0.0.1/rpo/style.css</code></p>
+<p>利用RPO需要Web页面以<strong>相对路径</strong>的css或js文件<br>需要注意的是apache要开启url自动解码需要在配置文件中加入<code>AllowEncodedSlashes On</code></p>
+<h2 id="引入js文件攻击-1"><a href="#引入js文件攻击-1" class="headerlink" title="引入js文件攻击 (1)"></a>引入js文件攻击 (1)</h2><p><code>../</code>在url中表示上一级的意思利用这个我们可以加载到其他目录下的文件<br>页面以类似这种方式引入js文件时<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;../jquery.js&quot;&gt;&lt;/script&gt;</code><br>当我们访问<code>http://127.0.0.1/rpo/1/3/..%2f2/4/example.html</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/rpo/1/2/4/example.php</div><div class="line">正常加载应 &lt;script type=&quot;text/javascript&quot; src=&quot;http://127.0.0.1/rpo/1/jquery.js&quot;&gt;&lt;/script&gt;</div><div class="line">浏览器 http://127.0.0.1/rpo/1/3/..%2f2/4/example.php</div><div class="line">加载 http://127.0.0.1/rpo/1/3/jquery.js(evil)</div></pre></td></tr></table></figure></p>
+<p>如果我们能得知上传文件路径通过RPO让Web页面用js解析我们上传的文件chrome不能将图片解析为js但可以将类似txt,doc,rar解析为js就能触发反射性xss<br>但这样利用局限很大要求我们能控制上传文件的文件名和文件目录名</p>
+<h2 id="引入js文件攻击-2"><a href="#引入js文件攻击-2" class="headerlink" title="引入js文件攻击 (2)"></a>引入js文件攻击 (2)</h2><p>如果网站有上传和下载功能<br>页面以类似这种方式引入js文件时<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.js&quot;&gt;&lt;/script&gt;</code><br>我们访问<code>http://127.0.0.1/rpo/download.php/..%2findex.php</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/rpo/index.php</div><div class="line">正常加载应 http://127.0.0.1/rpo/js/jquery.js</div><div class="line">浏览器 http://127.0.0.1/rpo/download.php/..%2findex.php</div><div class="line">加载 http://127.0.0.1/rpo/download.php/js/jquery.js</div></pre></td></tr></table></figure>
+<p><code>http://127.0.0.1/rpo/download.php</code>下载的正是我们上传的恶意文件<br><img src="rpo1.png" alt=""></p>
+<h2 id="引入恶意css文件攻击IE"><a href="#引入恶意css文件攻击IE" class="headerlink" title="引入恶意css文件攻击IE"></a>引入恶意css文件攻击IE</h2><p>当页面中提供类似搜索功能,能把搜索的字符串打印出来<br>页面以类似这种方式引入css文件时<br><code>&lt;link href=&quot;../../styles.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</code><br><code>http://127.0.0.1/ci/index.php/welcome/index/(string)</code>能打印搜索的字符串      </p>
+<p>我们访问<br><code>http://127.0.0.1/ci/index.php/welcome/index/{}*{background:red}/..%2f..%2f..%2f../rpo/example.html</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/ci/rpo/example.html</div><div class="line">正常加载应 http://127.0.0.1/styles.css</div><div class="line">浏览器 http://127.0.0.1/ci/index.php/welcome/index/&#123;&#125;*&#123;background:red&#125;/..%2f..%2f..%2f../rpo/example.html</div><div class="line">加载 http://127.0.0.1/ci/index.php/welcome/index/&#123;&#125;*&#123;background:red&#125;</div></pre></td></tr></table></figure></p>
+<p><code>http://127.0.0.1/ci/index.php/welcome/index/{}*{background:red}</code>此页面内的内容则包含了我们的恶意css代码浏览器忽视其他无关的内容正常执行</p>
+<p><img src="rpo2.png" alt=""></p>
+<p>在IE中可以使用<strong>expression()</strong>在css中执行js从达到xss攻击</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说RPO的攻击还是比较鸡肋的费了大力气也只能进行反射性xss攻击而已<del>我也是看完才知道这么鸡肋QAQ</del>,但思路很有意思搜索功能的利用很有创意<br>而且看了这么多英文文献突然又感觉过六级有望了QAQ</p>
+<h2 id="文献"><a href="#文献" class="headerlink" title="文献"></a>文献</h2><p><a href="http://www.mbsd.jp/Whitepaper/rpo.pdf" target="_blank" rel="external">http://www.mbsd.jp/Whitepaper/rpo.pdf</a><br><a href="http://blog.portswigger.net/2015/02/prssi.html" target="_blank" rel="external">http://blog.portswigger.net/2015/02/prssi.html</a><br><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a>                  </p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;RPO-Relative-Path-Overwrite-相对路径覆盖&quot;&gt;&lt;a href=&quot;#RPO-Relative-Path-Overwrite-相对路径覆盖&quot; class=&quot;headerlink&quot; title=&quot;RPO (Relative Path Overwrite) 相对路径覆盖&quot;&gt;&lt;/a&gt;RPO (Relative Path Overwrite) 相对路径覆盖&lt;/h1&gt;&lt;hr&gt;
+&lt;h2 id=&quot;什么RPO&quot;&gt;&lt;a href=&quot;#什么RPO&quot; class=&quot;headerlink&quot; title=&quot;什么RPO&quot;&gt;&lt;/a&gt;什么RPO&lt;/h2&gt;&lt;p&gt;RPO就是一种利用服务端与浏览器之间对 &lt;strong&gt;url编码&lt;/strong&gt; 的处理方式不同所发起的攻击&lt;br&gt;可以导致Web页面引入非法的css文件和javascript文件导致xss&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>笔记</title>
     <link href="https://5eafood.github.io/2017/03/22/Some-Notes/"/>
     <id>https://5eafood.github.io/2017/03/22/Some-Notes/</id>
@@ -92,42 +156,6 @@
     
       &lt;h1 id=&quot;笔记&quot;&gt;&lt;a href=&quot;#笔记&quot; class=&quot;headerlink&quot; title=&quot;笔记&quot;&gt;&lt;/a&gt;笔记&lt;/h1&gt;&lt;hr&gt;
 &lt;p&gt;一些会用到的payload收集起来避免临时去找不定期更新&lt;/p&gt;
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>RPO (Relative Path Overwrite) 相对路径覆盖</title>
-    <link href="https://5eafood.github.io/2017/03/22/RPO/"/>
-    <id>https://5eafood.github.io/2017/03/22/RPO/</id>
-    <published>2017-03-22T15:14:48.000Z</published>
-    <updated>2017-03-22T18:44:49.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="RPO-Relative-Path-Overwrite-相对路径覆盖"><a href="#RPO-Relative-Path-Overwrite-相对路径覆盖" class="headerlink" title="RPO (Relative Path Overwrite) 相对路径覆盖"></a>RPO (Relative Path Overwrite) 相对路径覆盖</h1><hr>
-<h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss<br><a id="more"></a></p>
-<h2 id="RPO的原理"><a href="#RPO的原理" class="headerlink" title="RPO的原理"></a>RPO的原理</h2><p>我们访问<code>http://127.0.0.1/rpo/1/2/4/example.php</code>, 当页面以这种方式引入css或js文件时<br><code>&lt;link href=&quot;../../style.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</code><br>浏览器加载的是<code>http://127.0.0.1/rpo/1/style.css</code>         </p>
-<p>但如果将url改为<code>http://127.0.0.1/rpo/1%2f2/4/example.php</code>,服务器会解码%2f为’/‘<br>继续访问<code>http://127.0.0.1/rpo/1/2/4/example.php</code>而浏览器这会将<code>/1%2f2/</code>最为一段路径<br>加载<code>http://127.0.0.1/rpo/style.css</code></p>
-<p>利用RPO需要Web页面以<strong>相对路径</strong>的css或js文件<br>需要注意的是apache要开启url自动解码需要在配置文件中加入<code>AllowEncodedSlashes On</code></p>
-<h2 id="引入js文件攻击-1"><a href="#引入js文件攻击-1" class="headerlink" title="引入js文件攻击 (1)"></a>引入js文件攻击 (1)</h2><p><code>../</code>在url中表示上一级的意思利用这个我们可以加载到其他目录下的文件<br>页面以类似这种方式引入js文件时<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;../jquery.js&quot;&gt;&lt;/script&gt;</code><br>当我们访问<code>http://127.0.0.1/rpo/1/3/..%2f2/4/example.html</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/rpo/1/2/4/example.php</div><div class="line">正常加载应 &lt;script type=&quot;text/javascript&quot; src=&quot;http://127.0.0.1/rpo/1/jquery.js&quot;&gt;&lt;/script&gt;</div><div class="line">浏览器 http://127.0.0.1/rpo/1/3/..%2f2/4/example.php</div><div class="line">加载 http://127.0.0.1/rpo/1/3/jquery.js(evil)</div></pre></td></tr></table></figure></p>
-<p>如果我们能得知上传文件路径通过RPO让Web页面用js解析我们上传的文件chrome不能将图片解析为js但可以将类似txt,doc,rar解析为js就能触发反射性xss<br>但这样利用局限很大要求我们能控制上传文件的文件名和文件目录名</p>
-<h2 id="引入js文件攻击-2"><a href="#引入js文件攻击-2" class="headerlink" title="引入js文件攻击 (2)"></a>引入js文件攻击 (2)</h2><p>如果网站有上传和下载功能<br>页面以类似这种方式引入js文件时<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.js&quot;&gt;&lt;/script&gt;</code><br>我们访问<code>http://127.0.0.1/rpo/download.php/..%2findex.php</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/rpo/index.php</div><div class="line">正常加载应 http://127.0.0.1/rpo/js/jquery.js</div><div class="line">浏览器 http://127.0.0.1/rpo/download.php/..%2findex.php</div><div class="line">加载 http://127.0.0.1/rpo/download.php/js/jquery.js</div></pre></td></tr></table></figure>
-<p><code>http://127.0.0.1/rpo/download.php</code>下载的正是我们上传的恶意文件<br><img src="rpo1.png" alt=""></p>
-<h2 id="引入恶意css文件攻击IE"><a href="#引入恶意css文件攻击IE" class="headerlink" title="引入恶意css文件攻击IE"></a>引入恶意css文件攻击IE</h2><p>当页面中提供类似搜索功能,能把搜索的字符串打印出来<br>页面以类似这种方式引入css文件时<br><code>&lt;link href=&quot;../../styles.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</code><br><code>http://127.0.0.1/ci/index.php/welcome/index/(string)</code>能打印搜索的字符串      </p>
-<p>我们访问<br><code>http://127.0.0.1/ci/index.php/welcome/index/{}*{background:red}/..%2f..%2f..%2f../rpo/example.html</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">服务端 http://127.0.0.1/ci/rpo/example.html</div><div class="line">正常加载应 http://127.0.0.1/styles.css</div><div class="line">浏览器 http://127.0.0.1/ci/index.php/welcome/index/&#123;&#125;*&#123;background:red&#125;/..%2f..%2f..%2f../rpo/example.html</div><div class="line">加载 http://127.0.0.1/ci/index.php/welcome/index/&#123;&#125;*&#123;background:red&#125;</div></pre></td></tr></table></figure></p>
-<p><code>http://127.0.0.1/ci/index.php/welcome/index/{}*{background:red}</code>此页面内的内容则包含了我们的恶意css代码浏览器忽视其他无关的内容正常执行</p>
-<p><img src="rpo2.png" alt=""></p>
-<p>在IE中可以使用<strong>expression()</strong>在css中执行js从达到xss攻击</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说RPO的攻击还是比较鸡肋的费了大力气也只能进行反射性xss攻击而已<del>我也是看完才知道这么鸡肋QAQ</del>,但思路很有意思搜索功能的利用很有创意<br>而且看了这么多英文文献突然又感觉过六级有望了QAQ</p>
-<h2 id="文献"><a href="#文献" class="headerlink" title="文献"></a>文献</h2><p><a href="http://www.mbsd.jp/Whitepaper/rpo.pdf" target="_blank" rel="external">http://www.mbsd.jp/Whitepaper/rpo.pdf</a><br><a href="http://blog.portswigger.net/2015/02/prssi.html" target="_blank" rel="external">http://blog.portswigger.net/2015/02/prssi.html</a><br><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a>                  </p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;RPO-Relative-Path-Overwrite-相对路径覆盖&quot;&gt;&lt;a href=&quot;#RPO-Relative-Path-Overwrite-相对路径覆盖&quot; class=&quot;headerlink&quot; title=&quot;RPO (Relative Path Overwrite) 相对路径覆盖&quot;&gt;&lt;/a&gt;RPO (Relative Path Overwrite) 相对路径覆盖&lt;/h1&gt;&lt;hr&gt;
-&lt;h2 id=&quot;什么RPO&quot;&gt;&lt;a href=&quot;#什么RPO&quot; class=&quot;headerlink&quot; title=&quot;什么RPO&quot;&gt;&lt;/a&gt;什么RPO&lt;/h2&gt;&lt;p&gt;RPO就是一种利用服务端与浏览器之间对 &lt;strong&gt;url编码&lt;/strong&gt; 的处理方式不同所发起的攻击&lt;br&gt;可以导致Web页面引入非法的css文件和javascript文件导致xss&lt;br&gt;
     
     </summary>
     

