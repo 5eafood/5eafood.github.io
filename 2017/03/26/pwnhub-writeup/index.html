@@ -6,9 +6,7 @@
   <title>pwnhub writeup | SeaFood&#39;s blog</title>
   <meta name="author" content="SeaFood">
   
-  <meta name="description" content="pwnhub wp 大物必须过刚看的RPO (Relative Path Overwrite) 相对路径覆盖就被人用来出题了蛮放上来凑个数
-http://blog.innerht.ml/rpo-gadgets/
-原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问http://doma">
+  <meta name="description" content="pwnhub wp 大物必须过刚看的RPO (Relative Path Overwrite) 相对路径覆盖就被人用来出题了蛮放上来凑个数">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -64,6 +62,7 @@ http://blog.innerht.ml/rpo-gadgets/
     <div class="entry">
       
         <h1 id="pwnhub-wp-大物必须过"><a href="#pwnhub-wp-大物必须过" class="headerlink" title="pwnhub wp 大物必须过"></a>pwnhub wp 大物必须过</h1><p>刚看的<strong>RPO (Relative Path Overwrite) 相对路径覆盖</strong>就被人用来出题了蛮放上来凑个数</p>
+<a id="more"></a>
 <p><a href="http://blog.innerht.ml/rpo-gadgets/" target="_blank" rel="external">http://blog.innerht.ml/rpo-gadgets/</a></p>
 <p>原理大概就是利用浏览器和服务器对url编码的解析方式不同当我们访问<code>http://domain/1%2f2.php</code>时服务器会返回<code>http://domain/1/2.php</code>的内容而浏览器则会认为<code>1%2f2.php</code>为一个文件</p>
 <p>在这题的<code>52.80.19.55/classes.php</code>下是这样引入css的</p>
@@ -89,7 +88,7 @@ http://blog.innerht.ml/rpo-gadgets/
 
 
 <section id="comment">
-  <h1 class="title">Kommentare</h1>
+  <h1 class="title">Comments</h1>
 
   
 </section>

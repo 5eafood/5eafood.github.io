@@ -6,9 +6,7 @@
   <title>ssrf | SeaFood&#39;s blog</title>
   <meta name="author" content="SeaFood">
   
-  <meta name="description" content="ssrf小结
-ssrf的发现php123file_get_contents()  默认不支持gopher等协议fsockopen() 极少使用curl_exec() 默认不会302跳转 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, True);可开启转跳
-pyth">
+  <meta name="description" content="ssrf小结">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -63,7 +61,8 @@ pyth">
     </header>
     <div class="entry">
       
-        <h1 id="ssrf小结"><a href="#ssrf小结" class="headerlink" title="ssrf小结"></a>ssrf小结</h1><hr>
+        <h1 id="ssrf小结"><a href="#ssrf小结" class="headerlink" title="ssrf小结"></a>ssrf小结</h1><a id="more"></a>
+<hr>
 <h2 id="ssrf的发现"><a href="#ssrf的发现" class="headerlink" title="ssrf的发现"></a>ssrf的发现</h2><h3 id="php"><a href="#php" class="headerlink" title="php"></a>php</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">file_get_contents()  默认不支持gopher等协议</div><div class="line">fsockopen() 极少使用</div><div class="line">curl_exec() 默认不会<span class="number">302</span>跳转 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, <span class="keyword">True</span>);可开启转跳</div></pre></td></tr></table></figure>
 <h3 id="python"><a href="#python" class="headerlink" title="python"></a>python</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">requests 不支持gopher等协议</div><div class="line">urllib 不支持gopher等协议 存在http头注入的漏洞</div><div class="line">pycurl 同curl_exec 默认支持gopher等协议但默认不支持302跳转 c.setopt(c.FOLLOWLOCATION, 1)开启转跳</div></pre></td></tr></table></figure>
 <p>黑盒测试时若无回显且状态码无变化我在测试学校的discuz论坛时无论是否存在端口状态码都为200可以利用<strong>ftp://</strong>连接测试是否存在ssrf若端口存在则触发ftp连接长时间后触发超时断开若不存在则快速断开</p>
@@ -102,7 +101,7 @@ pyth">
 
 
 <section id="comment">
-  <h1 class="title">Kommentare</h1>
+  <h1 class="title">Comments</h1>
 
   
 </section>
