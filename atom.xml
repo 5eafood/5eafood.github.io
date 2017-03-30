@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://5eafood.github.io/"/>
-  <updated>2017-03-30T17:16:13.000Z</updated>
+  <updated>2017-03-30T17:18:53.935Z</updated>
   <id>https://5eafood.github.io/</id>
   
   <author>
@@ -20,61 +20,61 @@
     <link href="https://5eafood.github.io/2017/03/31/what-happen/"/>
     <id>https://5eafood.github.io/2017/03/31/what-happen/</id>
     <published>2017-03-30T17:15:49.000Z</published>
-    <updated>2017-03-30T17:16:13.000Z</updated>
+    <updated>2017-03-30T17:18:53.935Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="�����Ƿ���googleʱ��������ʲo"><a href="#�����Ƿ���googleʱ��������ʲo" class="headerlink" title="�����Ƿ���googleʱ��������ʲô"></a>�����Ƿ���googleʱ��������ʲô</h1><p>��΢���Ͽ��������������⣬�������������������� www.google.com ���Ұ��»س�֮��������ʲô��������дһ���Լ������⣨�����������ص����ݣ���<br><a id="more"></a></p>
-<h2 id="url����"><a href="#url����" class="headerlink" title="url����"></a>url����</h2><p>������ͨ����������url���ж�URL�Ƿ��Ϸ������ڷǷ�URL�ִ��������Ὣ֮���ݸ��������档��������������������������punycode���롣</p>
-<h2 id="��������"><a href="#��������" class="headerlink" title="��������"></a>��������</h2><p>�����������յ���url�г�ȡ�������ֶΣ����Ƿ��ʵ�������</p>
+    <content type="html"><![CDATA[<h1 id="当我们访问google时发生了什么"><a href="#当我们访问google时发生了什么" class="headerlink" title="当我们访问google时发生了什么"></a>当我们访问google时发生了什么</h1><p>在微博上看到的万能面试题”当你在浏览器中输入 www.google.com 并且按下回车之后发生了什么”我写一下自己的理解仅与网络相关的内容<br><a id="more"></a></p>
+<h2 id="url解析"><a href="#url解析" class="headerlink" title="url解析"></a>url解析</h2><p>浏览器通过正则解析url判断URL是否合法对于非法URL现代浏览器会将之传递给搜索引擎对于中文域名浏览器会进行punycode编码</p>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>浏览器将接收到的url中抽取出域名字段就是访问的主机名</p>
 <ol>
-<li>���������������ȼ����Լ��������Ƿ�����������Ӧ��ip��������������������һ��</li>
-<li>����hosts�ļ����Ƿ���������Ӧ��IP�����������ڽ�����һ��</li>
-<li>һЩ·����Ҳ�Ỻ��������Ϣ��·�����������м��飬��������Ϊ�ͻ��˵�dns����</li>
-<li>�ն��򱾵�DNS���������������󣬱���DNSͨ���������ṩ�̣��������ţ��ṩ�����������ֹ��趨Ϊ���ƹȸ��ṩ��8.8.8.8����DNS������dns��Ϊ������Ȩ������������������Ϣ��DNS����ͨ��ΪUDP��ʽ�����ڳ��ȹ���ʱ������TCP��ʽ</li>
-<li>����DNS���������������Ƿ����ڶ�Ӧ��������Ϣ���������ڣ�����13̨��������������������������������������Ϊ<strong>www.google.com</strong>������<strong>com</strong>��������������������֮�󽫻��õ�<strong>google.com</strong>���������������ĵ�ַ</li>
-<li>����DNS������<strong>google.com</strong>�������������������������󣬲����ջ�����<strong>www.google.com</strong>��IP��ַ��Ϣ</li>
-<li>����DNS����ѯ���õ�IP��ַ��Ϣ���沢���ظ��ͻ��� </li>
+<li>首先浏览器会优先检查自己缓存中是否存在域名对应的ip如果不存在则进入下一步</li>
+<li>检查hosts文件中是否有域名对应的IP如果不存在进入下一步</li>
+<li>一些路由器也会缓存域名信息路由器会在其中检查以上三步为客户端的dns缓存</li>
+<li>终端向本地DNS发出域名解析请求本地DNS通常由网络提供商例如电信提供或则可以手工设定为类似谷歌提供的8.8.8.8公共DNS本地dns作为代理向权威服务器请求域名信息DNS请求通常为UDP格式但在长度过长时会改用TCP格式</li>
+<li>本地DNS检查自身缓存中是否存在对应的域名信息若不存在则向13台根域名服务器发起域名解析请求如果域名为<strong>www.google.com</strong>则向<strong>com</strong>域名服务器发出请求之后将会得到<strong>google.com</strong>二级域名服务器的地址</li>
+<li>本地DNS继续向<strong>google.com</strong>二级域名服务器发起解析请求并最终获得了<strong>www.google.com</strong>的IP地址信息</li>
+<li>本地DNS将查询获得的IP地址信息缓存并返回给客户端 </li>
 </ol>
-<h3 id="�����ٳ�"><a href="#�����ٳ�" class="headerlink" title="�����ٳ�"></a>�����ٳ�</h3><ol>
-<li>����·�������ı���DNS��ʹ��ָ���ڿ͵�DNS�����������ش�����ip���Խٳ�����</li>
-<li>ֱ������DNS���������޸Ļ���</li>
-<li>����dns����Ϊudp���ص㣬����ʵDNS���󷵻�ǰ�����ܺ��߷���һ��α����DNS������Ӧ</li>
+<h3 id="域名劫持"><a href="#域名劫持" class="headerlink" title="域名劫持"></a>域名劫持</h3><ol>
+<li>入侵路由器更改本地DNS使其指向黑客的DNS服务器返回错误的ip得以劫持域名</li>
+<li>直接入侵DNS服务器修改缓存</li>
+<li>利用dns请求为udp的特点在真实DNS请求返回前给受害者发送一个伪造的DNS解析响应</li>
 </ol>
-<h3 id="dns-rebinding-����"><a href="#dns-rebinding-����" class="headerlink" title="dns rebinding ����"></a>dns rebinding ����</h3><p>����DNS�������Ļ�������ʱ�ޣ���TTL(Time- To-Live)<br>��������Ҫ�����ܺ�����<strong>www.b.com/secret.php</strong> �µ�����            </p>
+<h3 id="dns-rebinding-攻击"><a href="#dns-rebinding-攻击" class="headerlink" title="dns rebinding 攻击"></a>dns rebinding 攻击</h3><p>本地DNS服务器的缓存存在时限即TTL(Time- To-Live)<br>假设我们要获得受害者在<strong>www.b.com/secret.php</strong> 下的内容            </p>
 <ol>
-<li>�����������ǵ�����ttlΪ1����(���̵�ʱ��)</li>
-<li>�յ��ܺ��߷���<strong>www.a.com/evil.html</strong>���������ȴ�1��������</li>
-<li>֮�������ǽ�<strong>www.a.com</strong>�󶨵�<strong>www.b.com</strong>��ip��</li>
-<li>����js��ttlʱ������ʹ�ܺ��߷��� <strong>www.a.com/secret.php</strong>��ʵ����js���ʵ�ʹ<strong>www.b.com/secret.php</strong>,ʹ��js����ҳ������<br>�������������÷�ʽ��������������©���ƹ�ip����</li>
+<li>我们设置我们的域名ttl为1分钟(极短的时间)</li>
+<li>诱导受害者访问<strong>www.a.com/evil.html</strong>并让他等待1分钟以上</li>
+<li>之后我们将<strong>www.a.com</strong>绑定到<strong>www.b.com</strong>的ip上</li>
+<li>利用js在ttl时间过后使受害者访问 <strong>www.a.com/secret.php</strong>实际上js访问的使<strong>www.b.com/secret.php</strong>,使用js弹回页面内容<br>还有其他的利用方式例如配合其他漏洞绕过ip限制</li>
 </ol>
-<h2 id="TLS����"><a href="#TLS����" class="headerlink" title="TLS����"></a>TLS����</h2><p>TLS��Ϊ��HTTPS��ʹ�ã�������ÿ����վ����Ҫ��Ŀǰgoogle��ȫ��ʹ��HTTPS      </p>
+<h2 id="TLS握手"><a href="#TLS握手" class="headerlink" title="TLS握手"></a>TLS握手</h2><p>TLS是为了HTTPS的使用并不是每个网站都需要目前google已全面使用HTTPS      </p>
 <ol>
-<li>�ͻ��˷���һ��<strong>Client hello</strong>��Ϣ���������ˣ���Ϣ��ͬʱ����������TLS�汾�� �������Ϳ��õ�ѹ���㷨</li>
-<li>�����������ͻ��˷���һ<strong>Server hello</strong>��Ϣ����Ϣ�а����˷������˵�TLS�汾��������ѡ�����ĸ����ܺ�ѹ���㷨���Լ��������Ĺ���֤�飬֤���а����˹�Կ���ͻ��˻�ʹ��������Կ���ܽ����������ֹ��̣�ֱ��Э������һ���µĶԳ���Կ</li>
-<li>�ͻ��˸����Լ�������CA�б�����֤�������˵�֤���Ƿ���Ч��������Ч���ͻ��˻�����һ��α��������ʹ�÷������Ĺ�Կ���������⴮�������ᱻ���������µĶԳ���Կ</li>
-<li>��������ʹ���Լ���˽Կ���������ᵽ����������Ȼ��ʹ���⴮�����������Լ��ĶԳ�����Կ</li>
-<li>�ͻ��˷���һ��<strong>Finished</strong>��Ϣ���������ˣ�ʹ�öԳ���Կ��������ͨѶ��һ��ɢ��ֵ</li>
-<li>�������������Լ��� hash ֵ��Ȼ�����ܿͻ��˷���������Ϣ������������ֵ�Ƿ���Ӧ��������Ӧ�������ͻ��˷���һ��<strong>Finished</strong>��Ϣ��Ҳʹ��Э�̺õĶԳ���Կ����</li>
-<li>�����ڿ�ʼ������������ TLS �Ự��ʹ�öԳ���Կ���м��ܣ�����Ӧ�ò㣨HTTP������</li>
+<li>客户端发送一个<strong>Client hello</strong>消息到服务器端消息中同时包含了它的TLS版本 密文族和可用的压缩算法</li>
+<li>服务器端向客户端返回一<strong>Server hello</strong>消息消息中包含了服务器端的TLS版本服务器选择了哪个加密和压缩算法以及服务器的公开证书证书中包含了公钥客户端会使用这个公钥加密接下来的握手过程直到协商生成一个新的对称密钥</li>
+<li>客户端根据自己的信任CA列表验证服务器端的证书是否有效如果有效客户端会生成一串伪随机数使用服务器的公钥加密它这串随机数会被用于生成新的对称密钥</li>
+<li>服务器端使用自己的私钥解密上面提到的随机数然后使用这串随机数生成自己的对称主密钥</li>
+<li>客户端发送一个<strong>Finished</strong>消息给服务器端使用对称密钥加密这次通讯的一个散列值</li>
+<li>服务器端生成自己的 hash 值然后解密客户端发送来的信息检查这两个值是否对应如果对应就向客户端发送一个<strong>Finished</strong>消息也使用协商好的对称密钥加密</li>
+<li>从现在开始接下来整个 TLS 会话都使用对称秘钥进行加密传输应用层HTTP内容</li>
 </ol>
-<h3 id="�м��˽ٳ�"><a href="#�м��˽ٳ�" class="headerlink" title="�м��˽ٳ�"></a>�м��˽ٳ�</h3><p>https�޷�ֱ�ӱ��м��˹�������������վû��ǿ���û�ʹ��HTTPS���ڿͿ�������<strong>SSLStrip</strong>�������м��˹�����httpsת��Ϊhttp���Ӷ��ٳֳɹ���ͬ���ķ��������������ĵ�DNS�ٳ�һͬʹ�ã���Ϊ������������TLS���֡�</p>
-<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p>http����tcp/ipЭ�飬���������ĵ�������ip�Ͷ˿ں�������������һ�������˿�������������tcp����������</p>
-<h3 id="TCP��������"><a href="#TCP��������" class="headerlink" title="TCP��������"></a>TCP��������</h3><p>TCP�п���λ��6����־���ع��ɣ�����SYN���������������ӣ�ACK����ȷ�����к���Ч��</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. client�����������󣬿���λ�е�ACK=0��SYN=1�������㷨����SYN���ݶε����к�seq=x����������SYN_SENT״̬�ȴ�server��Ӧ</div><div class="line">2. server�����յ���������������ͬ�����ӣ�����client����ȷ�ϣ�ACK=1��SYN=1���㷨����SYN���ݶε����к�seq=y��ACK��ȷ�����к�Ϊack=x+1��server����SYN_RECV״̬</div><div class="line">3. client��SYN=0,ACK=1,seq=x+1,ack=y+1�����͸�server���������߶�����ESTABLISHED״̬������TCP�������֡�</div><div class="line">4. serverÿ����һ������seq=seq+1��client����ack=seq+1(��������ͷ��û��keep-alive��������һ�����ݺ����ӶϿ�)</div><div class="line">5. �������ر�TCP���ӣ�����һ��FIN��clientȷ��FIN������һ��ACKΪ�յ����к�+1�������Լ���FIN�����ر����ݴ��ͣ�server����ACKΪ�յ����к�+1��֮�󳹵׹ر�</div></pre></td></tr></table></figure>
-<p>��TCP���ֵĵڶ�������ȱ�ݣ������߿��Է��ʹ���SYN�������������ķ�������Դ����SYN Flood������Ϊ�˽����������⣬��Ҫ����SYN cookie��</p>
-<p>���յ�SYN�����󣬷����������仺������ʹ��IP��������Ϣ����cookie����Ϊ���кŷ��ظ�client���ͻ��˷���ack���������¼���cookie���뷵��ֵȷ�Ϻ��ٷ�����Դ��</p>
-<p>tcp���ӽ��������������������������ģ����а�����http��Э���汾�������ķ�����host��user-agent�����뷽ʽ��ѹ����ʽ�ȡ�������������֧�ֹȸ���SPDYЭ�飬������HTTP��ͷ������ѹ�����Լ������Ż����ӿ������ٶȡ�</p>
-<p>����������http�����󣬽��յķ�����Ӧ��Ϊ����������������������������ת���������ķ�������������Ӧ�������ظ���������</p>
-<p>�������յ���Ӧ����ǰ�˻�������Ⱦ������js��css�ļ������˶�ǰ���˽ⲻ�࣬�Ͳ���д�ˡ�</p>
-<h2 id="���紫������"><a href="#���紫������" class="headerlink" title="���紫������"></a>���紫������</h2><ol>
-<li>��˫����ͬһ��������Ҫ����������Ҫ�Է���MAC��ַ����ʱ������Ҫ<code>ARP��Address Resolution Protocol��</code>��arp���������ṩIP��MAC��ַ��ӳ����ϵ����������������һ���ȼ���������arp�����Ƿ��ж�Ӧ��ӳ����ϵ���������ڣ��򷢳�ARP�㲥��������ӦIP��������Ӧ����Ӧ�����յ�ARP�㲥�󣬷�������MAC��ַ��֮������ͨ�š���Ȼ���κ�����������ӦARP�㲥������������ӦARP�㲥�����ش�����MAC��ַ�����ɽ���ARP��ƭ������</li>
-<li>��˫������ͬһ�������������ط����������ڴ�֮ǰҪ�����ص�MAC���������ϡ�·�ɻ�һ��һ����Ѱ��ͨ�Ŷ�����֮�󷵻�һ�����̵�·����</li>
-<li>ͨ��������Ӫ�̻�ʹ��<code>NAT(Network Address Translation)</code>���������û�����������������ʱ����IP���з������û�һ������IP�Ͷ˿�����ͨ�š�</li>
+<h3 id="中间人劫持"><a href="#中间人劫持" class="headerlink" title="中间人劫持"></a>中间人劫持</h3><p>https无法直接被中间人攻击但如果网站没有强制用户使用HTTPS黑客可以利用<strong>SSLStrip</strong>进行中间人攻击将https转换为http从而劫持成功同样的方法可以配合上文的DNS劫持一同使用因为域名解析先于TLS握手</p>
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p>http基于tcp/ip协议在浏览器的到域名的ip和端口后浏览器会以一个随机端口向服务器发起tcp的三次握手</p>
+<h3 id="TCP三次握手"><a href="#TCP三次握手" class="headerlink" title="TCP三次握手"></a>TCP三次握手</h3><p>TCP中控制位由6个标志比特构成其中SYN代表请求建立连接ACK代表确认序列号有效</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. client发出连接请求控制位中的ACK=0SYN=1根据算法生成SYN数据段的序列号seq=x而后进入SYN_SENT状态等待server响应</div><div class="line">2. server监听收到连接请求后若同意连接则向client发送确认ACK=1SYN=1算法生成SYN数据段的序列号seq=yACK的确认序列号为ack=x+1server进入SYN_RECV状态</div><div class="line">3. client将SYN=0,ACK=1,seq=x+1,ack=y+1发送给server而后两者都进入ESTABLISHED状态完成TCP三次握手</div><div class="line">4. server每发送一次数据seq=seq+1client返回ack=seq+1(如果请求头中没有keep-alive则发送一次数据后连接断开)</div><div class="line">5. 服务器关闭TCP连接发送一个FINclient确认FIN返回一个ACK为收到序列号+1发送自己的FIN并关闭数据传送server发送ACK为收到序列号+1之后彻底关闭</div></pre></td></tr></table></figure>
+<p>在TCP握手的第二步存在缺陷攻击者可以发送大量SYN连接请求消耗服务器资源即SYN Flood攻击为了解决这个问题需要引入SYN cookie</p>
+<p>在收到SYN请求后服务器不分配缓冲区使用IP等连接信息生成cookie作为序列号返回给client客户端发送ack包后重新计算cookie与返回值确认后再分配资源</p>
+<p>tcp连接建立后浏览器会生成请求报文其中包括http的协议版本请求的方法hostuser-agent编码方式压缩方式等部分浏览器还支持谷歌的SPDY协议他会对HTTP的头部进行压缩以及其他优化加快载入速度</p>
+<p>浏览器发出http请求后接收的服务器应该为代理服务器代理服务器将请求转发给真正的服务器并把响应结果返回给浏览器</p>
+<p>浏览器收到响应后前端会进行渲染加载js和css文件个人对前端了解不多就不乱写了</p>
+<h2 id="网络传输过程"><a href="#网络传输过程" class="headerlink" title="网络传输过程"></a>网络传输过程</h2><ol>
+<li>若双方在同一子网想要互相连接需要对方的MAC地址这时候就需要<code>ARPAddress Resolution Protocol</code>arp的作用是提供IP与MAC地址的映射关系发起连接请求的一方先检查自身的arp表中是否有对应的映射关系若不存在则发出ARP广播请求对应IP的主机响应对应主机收到ARP广播后返回它的MAC地址之后建立通信显然任何主机都能响应ARP广播如果恶意响应ARP广播返回错误的MAC地址即可进行ARP欺骗攻击</li>
+<li>若双方不在同一子网则向网关发起请求在此之前要有网关的MAC方法如上路由会一层一层的寻找通信对象之后返回一个最短的路径</li>
+<li>通常电信运营商会使用<code>NAT(Network Address Translation)</code>技术当用户向互联网发出连接时从IP池中分配给用户一个外网IP和端口用于通信</li>
 </ol>
 ]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;�����Ƿ���googleʱ��������ʲo&quot;&gt;&lt;a href=&quot;#�����Ƿ���googleʱ��������ʲo&quot; class=&quot;headerlink&quot; title=&quot;�����Ƿ���googleʱ��������ʲô&quot;&gt;&lt;/a&gt;�����Ƿ���googleʱ��������ʲô&lt;/h1&gt;&lt;p&gt;��΢���Ͽ��������������⣬�������������������� www.google.com ���Ұ��»س�֮��������ʲô��������дһ���Լ������⣨�����������ص����ݣ���&lt;br&gt;
+      &lt;h1 id=&quot;当我们访问google时发生了什么&quot;&gt;&lt;a href=&quot;#当我们访问google时发生了什么&quot; class=&quot;headerlink&quot; title=&quot;当我们访问google时发生了什么&quot;&gt;&lt;/a&gt;当我们访问google时发生了什么&lt;/h1&gt;&lt;p&gt;在微博上看到的万能面试题”当你在浏览器中输入 www.google.com 并且按下回车之后发生了什么”我写一下自己的理解仅与网络相关的内容&lt;br&gt;
     
     </summary>
     
