@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://5eafood.github.io/"/>
-  <updated>2017-05-01T16:22:24.538Z</updated>
+  <updated>2017-05-27T18:00:03.000Z</updated>
   <id>https://5eafood.github.io/</id>
   
   <author>
@@ -14,6 +14,41 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>uwp</title>
+    <link href="https://5eafood.github.io/2017/05/28/uwp/"/>
+    <id>https://5eafood.github.io/2017/05/28/uwp/</id>
+    <published>2017-05-27T17:58:22.000Z</published>
+    <updated>2017-05-27T18:00:03.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="UWP从入门到放弃"><a href="#UWP从入门到放弃" class="headerlink" title="UWP从入门到放弃"></a>UWP从入门到放弃</h1><p>uwp全称是Universal Windows Platform，是window通用应用平台，可以兼容运行在PC平台和移动平台。<br><a id="more"></a></p>
+<p>这是怎么做到的呢？解压安装包可以发现一个uwp的包里包括了x64 x86 arm三种的安装包，真是简单暴力</p>
+<p><img src="uwp\uwp1.PNG" alt="uwp1"></p>
+<h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><p>首先，你需要<strong>Visual Studio  2015</strong>或<strong>Visual Studio 2017</strong>，安装时勾上通用window应用开发工具</p>
+<p><img src="uwp\20160303_145340_786.jpg" alt="20160303_145340_786"></p>
+<p>默认情况下，在微软官网下载Visual Studio时，是用下载器在线安装，可能是我家的网络比较zz，下了一晚上都没好TAT，后来找到了iso，可安装时，还是要在线安装一些东西，就疯狂失败。最后用<strong>proxifier</strong>挂代理，又下了一晚上才好，zz微软。</p>
+<p>uwp应用的前端用xaml写，语法类似html和xml，后端可以用c++，c#，js写，具体可以看我后面给的教程。</p>
+<h2 id="放弃"><a href="#放弃" class="headerlink" title="放弃"></a>放弃</h2><p>主要还时讲讲我遇到的一些坑。</p>
+<p>在uwp中使用SQLite，需要在<strong>扩展与更新</strong>中安装<strong>SQLite for Universal Windows Platform </strong>，然后在<strong>管理Nuget程序包管理</strong>中安装<strong>SQLite.Net-PCL</strong>这个库用以操作SQLite。</p>
+<p>但我在运行程序的时候，在触发数据库操作后，就会发生异常中断，报错<strong>unable to load dll ‘sqlite3’:the specified module could not be found</strong>。google了很久，网上的解决方法都没法解决问题。后来我尝试去安装了另一个库<strong>System.Data.SQLite</strong>，居然解决了问题，可能是刚好补全了缺少的文件吧。</p>
+<p>在多次创建程序包后，可能会出现XX路径无法访问的错误，解决方法就是删除程序文件夹中的<strong>bin</strong>和<strong>obj</strong>文件夹。但<strong>Visual Studio</strong>在运行中时删不掉他们的，关闭再开启又要好久，难受。</p>
+<p>uwp的中文资料真的少的可怜，微软官方的中文手册，可以说是写的不清不楚，毫无用处。</p>
+<p>写uwp本来就是为了玩玩，毕竟用了很久的windows phone，然后我就换手机了，应该说连入门都没有就放弃了。</p>
+<p>微软药丸！</p>
+<h1 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h1><p><a href="https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/ContactCards/shared/Scenario1_Mini.xaml" target="_blank" rel="external">https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/ContactCards/shared/Scenario1_Mini.xaml</a></p>
+<p><a href="http://space.bilibili.com/18340402/#!/channel/detail?cid=1436&amp;page=1&amp;order=0" target="_blank" rel="external">http://space.bilibili.com/18340402/#!/channel/detail?cid=1436&amp;page=1&amp;order=0</a></p>
+<p><a href="https://comentsys.wordpress.com/2015/05/03/windows-10-universal-windows-platform-hello-world/" target="_blank" rel="external">https://comentsys.wordpress.com/2015/05/03/windows-10-universal-windows-platform-hello-world/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;UWP从入门到放弃&quot;&gt;&lt;a href=&quot;#UWP从入门到放弃&quot; class=&quot;headerlink&quot; title=&quot;UWP从入门到放弃&quot;&gt;&lt;/a&gt;UWP从入门到放弃&lt;/h1&gt;&lt;p&gt;uwp全称是Universal Windows Platform，是window通用应用平台，可以兼容运行在PC平台和移动平台。&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>CI_Router</title>
