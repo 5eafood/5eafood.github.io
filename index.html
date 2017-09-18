@@ -97,8 +97,8 @@
     </header>
     <div class="entry">
       
-        <h1 id="��WordPress-SQLi̸PHP��ʽ���ַ�������"><a href="#��WordPress-SQLi̸PHP��ʽ���ַ�������" class="headerlink" title="��WordPress SQLi̸PHP��ʽ���ַ�������"></a>��WordPress SQLi̸PHP��ʽ���ַ�������</h1><p><br /></p>
-<h3 id="0x00-����"><a href="#0x00-����" class="headerlink" title="0x00 ����"></a>0x00 ����</h3><p>���գ�WordPress������һ��<a href="https://www.seebug.org/vuldb/ssvid-96376">SQLi©��</a>��©��������WP�ĺ�̨�ϴ�ͼƬ��λ�ã�ͨ���޸�ͼƬ�����ݿ��еĲ������Լ�����php��<code>sprintf</code>���������ԣ���ɾ��ͼƬʱ������<code>&#39;</code>�����ŵ����ݡ�©�����ý�Ϊ���ѣ���˼·�ǳ�ֵ��ѧϰ��</p>
+        <h1 id="从WordPress-SQLi谈PHP格式化字符串问题"><a href="#从WordPress-SQLi谈PHP格式化字符串问题" class="headerlink" title="从WordPress SQLi谈PHP格式化字符串问题"></a>从WordPress SQLi谈PHP格式化字符串问题</h1><p><br /></p>
+<h3 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h3><p>近日，WordPress爆出了一个<a href="https://www.seebug.org/vuldb/ssvid-96376">SQLi漏洞</a>，漏洞发生在WP的后台上传图片的位置，通过修改图片在数据库中的参数，以及利用php的<code>sprintf</code>函数的特性，在删除图片时，导致<code>&#39;</code>单引号的逃逸。漏洞利用较为困难，但思路非常值得学习。</p>
 <p><br /><br>
       
     </div>

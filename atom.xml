@@ -138,83 +138,83 @@
     <link href="https://5eafood.github.io/2017/09/18/php-format-string/"/>
     <id>https://5eafood.github.io/2017/09/18/php-format-string/</id>
     <published>2017-09-18T15:35:58.000Z</published>
-    <updated>2017-09-18T15:41:08.000Z</updated>
+    <updated>2017-09-18T15:54:50.000Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="��WordPress-SQLi̸PHP��ʽ���ַ�������"><a href="#��WordPress-SQLi̸PHP��ʽ���ַ�������" class="headerlink" title="��WordPress SQLi̸PHP��ʽ���ַ�������"></a>��WordPress SQLi̸PHP��ʽ���ַ�������</h1><p><br></p>
-<h3 id="0x00-����"><a href="#0x00-����" class="headerlink" title="0x00 ����"></a>0x00 ����</h3><p>���գ�WordPress������һ��<a href="https://www.seebug.org/vuldb/ssvid-96376" target="_blank" rel="external">SQLi©��</a>��©��������WP�ĺ�̨�ϴ�ͼƬ��λ�ã�ͨ���޸�ͼƬ�����ݿ��еĲ������Լ�����php��<code>sprintf</code>���������ԣ���ɾ��ͼƬʱ������<code>&#39;</code>�����ŵ����ݡ�©�����ý�Ϊ���ѣ���˼·�ǳ�ֵ��ѧϰ��</p>
+    <content type="html"><![CDATA[<h1 id="从WordPress-SQLi谈PHP格式化字符串问题"><a href="#从WordPress-SQLi谈PHP格式化字符串问题" class="headerlink" title="从WordPress SQLi谈PHP格式化字符串问题"></a>从WordPress SQLi谈PHP格式化字符串问题</h1><p><br></p>
+<h3 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h3><p>近日，WordPress爆出了一个<a href="https://www.seebug.org/vuldb/ssvid-96376" target="_blank" rel="external">SQLi漏洞</a>，漏洞发生在WP的后台上传图片的位置，通过修改图片在数据库中的参数，以及利用php的<code>sprintf</code>函数的特性，在删除图片时，导致<code>&#39;</code>单引号的逃逸。漏洞利用较为困难，但思路非常值得学习。</p>
 <p><br><br><a id="more"></a></p>
-<h3 id="0x01-©������"><a href="#0x01-©������" class="headerlink" title="0x01 ©������"></a>0x01 ©������</h3><p>©��������<strong>wp-admin/upload.php</strong>��157�У�����ɾ�����ܣ�</p>
+<h3 id="0x01-漏洞分析"><a href="#0x01-漏洞分析" class="headerlink" title="0x01 漏洞分析"></a>0x01 漏洞分析</h3><p>漏洞发生在<strong>wp-admin/upload.php</strong>的157行，进入删除功能，</p>
 <p><img src="3.png" alt="3"></p>
-<p>֮�����뺯��<code>wp_delete_attachment( $post_id_del )</code>��<strong>$post_id_del</strong>�ɿأ�����û����<strong>(int)</strong>��ʽת��������</p>
+<p>之后进入函数<code>wp_delete_attachment( $post_id_del )</code>，<strong>$post_id_del</strong>可控，而且没有做<strong>(int)</strong>格式转化处理。</p>
 <p><br></p>
-<p><strong>wp_delete_attachment</strong>λ��<code>wp-includes\post.php</code>�� 4863 �С�����</p>
+<p><strong>wp_delete_attachment</strong>位于<code>wp-includes\post.php</code>的 4863 行。其中</p>
 <p><img src="4.png" alt="4"></p>
-<p>ͼƬ��post_id��������ѯ��<strong>$wpdb-&gt;prepare</strong>��ʹ����<strong>sprintf</strong>�������Զ�������ת������������<code>22 payload</code>���ᱻת��Ϊ<code>22</code>�����������ƹ���</p>
+<p>图片的post_id被带入查询，<strong>$wpdb-&gt;prepare</strong>中使用了<strong>sprintf</strong>，会做自动的类型转化，可以输入<code>22 payload</code>，会被转化为<code>22</code>，因而可以绕过。</p>
 <p><br></p>
-<p>֮������4898�е�<code>delete_metadata( &#39;post&#39;, null, &#39;_thumbnail_id&#39;, $post_id, true );</code>������</p>
-<p><strong>delete_metadata</strong>����λ��<code>wp-includes\meta.php</code>��307�У�</p>
+<p>之后进入4898行的<code>delete_metadata( &#39;post&#39;, null, &#39;_thumbnail_id&#39;, $post_id, true );</code>函数。</p>
+<p><strong>delete_metadata</strong>函数位于<code>wp-includes\meta.php</code>的307行，</p>
 <p><img src="5.png" alt="5"></p>
-<p>����������ƴ�ӳ�������sql���䣬<strong>meta_value</strong>Ϊ������<strong>media</strong>����</p>
+<p>在这里代码拼接出了如下sql语句，<strong>meta_value</strong>为传入的<strong>media</strong>参数</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> meta_id <span class="keyword">FROM</span> wp_postmeta <span class="keyword">WHERE</span> meta_key = <span class="string">'_thumbnail_id'</span> <span class="keyword">AND</span> meta_value = <span class="string">'payload'</span></div></pre></td></tr></table></figure>
-<p>֮������������������ѯ������Ϊ���������ܼ���������Ҫ�޸�<strong>_thumbnail_id</strong>��Ӧ��<strong>meta_value</strong>��ֵΪpayload����֤�в�ѯ������</p>
-<p>���ˣ�������Ҫ�ϴ�һ��ͼƬ������<code>д����</code>������Ϊ<strong>��ɫͼƬ</strong>��</p>
-<p>�����ݿ���<code>wp_postmeta</code>���п��Կ�����<code>_thumbnail_id</code>������ɫͼƬ�趨��ֵ����Ӧ��<strong>meta_value</strong>��ͼƬ��<strong>post_id</strong>��</p>
+<p>之后这条语句会进入查询，结果为真代码才能继续，所以要修改<strong>_thumbnail_id</strong>对应的<strong>meta_value</strong>的值为payload，保证有查询结果。</p>
+<p>因此，我们需要上传一张图片，并在<code>写文章</code>中设置为<strong>特色图片</strong>。</p>
+<p>在数据库的<code>wp_postmeta</code>表中可以看到，<code>_thumbnail_id</code>即是特色图片设定的值，对应的<strong>meta_value</strong>即图片的<strong>post_id</strong>。</p>
 <p><img src="1.png" alt="1"></p>
-<p>ԭ��ͨ��һ�� WP&lt;4.7.5 �汾��xmlrpc©���޸�<code>_thumbnail_id</code>��Ӧ<strong>meta_value</strong>��ֵ����ͨ������<code>importer</code>�޸ġ�����ֱ�������ݿ����޸ģ��޸�Ϊ���ǵ�payload��</p>
+<p>原文通过一个 WP&lt;4.7.5 版本的xmlrpc漏洞修改<code>_thumbnail_id</code>对应<strong>meta_value</strong>的值，或通过插件<code>importer</code>修改。这里直接在数据库里修改，修改为我们的payload。</p>
 <p><br></p>
-<p>֮����365�У��˴�����©���ĺ��ģ��������ڴ���ʹ��������<code>sprintf</code>ƴ�����䣬���¿ɿص�payload�����˵ڶ��ε�<code>sprintf</code>������payloadΪ<code>22 %1$%s hello</code></p>
+<p>之后在365行，此处便是漏洞的核心，问题在于代码使用了两次<code>sprintf</code>拼接语句，导致可控的payload进入了第二次的<code>sprintf</code>。输入payload为<code>22 %1$%s hello</code></p>
 <p><img src="9.png" alt="9"></p>
-<p>������ƴ�ӳ�sql���䣬����<strong>$wpdb-&gt;prepare</strong></p>
+<p>代码会拼接出sql语句，带入<strong>$wpdb-&gt;prepare</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> post_id <span class="keyword">FROM</span> wp_postmeta <span class="keyword">WHERE</span> meta_key = <span class="string">'%s'</span>  <span class="keyword">AND</span> meta_value = <span class="string">'22 %1$%s hello'</span></div></pre></td></tr></table></figure>
 <p><br></p>
-<p>����<strong>$wpdb-&gt;prepare</strong>�󣬴����Ὣ����<code>%s</code>ת��Ϊ<code>&#39;%s&#39;</code>����<code>meta_value = &#39;22 %1$&#39;%s&#39; hello&#39;</code></p>
+<p>进入<strong>$wpdb-&gt;prepare</strong>后，代码会将所有<code>%s</code>转化为<code>&#39;%s&#39;</code>，即<code>meta_value = &#39;22 %1$&#39;%s&#39; hello&#39;</code></p>
 <p><img src="6.png" alt="2"></p>
-<p>��Ϊ<strong>sprintf</strong>������ (vsprintf��sprintf����) ��<code>&#39;%s&#39;</code>��ǰһ��<code>&#39;</code>�ᱻ�Ե���<code>%1$&#39;%s</code>����ʽ��Ϊ_thumbnail_id ��������ʽ���ַ�������������������</p>
+<p>因为<strong>sprintf</strong>的问题 (vsprintf与sprintf类似) ，<code>&#39;%s&#39;</code>的前一个<code>&#39;</code>会被吃掉，<code>%1$&#39;%s</code>被格式化为_thumbnail_id ，最后格式化字符串出来的语句会变成</p>
 <p><img src="2.png" alt="2"></p>
-<p>�����ųɹ����ݣ�</p>
-<p>����payloadΪ</p>
+<p>单引号成功逃逸！</p>
+<p>最后payload为</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://localhost/wp-admin/upload.php?action=delete&amp;media[]=22%20%251%24%25s%20hello&amp;_wpnonce=bbba5b9cd3</div></pre></td></tr></table></figure>
-<p>����SQLע�벻�ᱨ����ֻ��ʹ����ʱע�룬������Ҫ��̨���ϴ�Ȩ�ޣ��������������Ƚ����ѡ�</p>
+<p>这个SQL注入不会报错，只能使用延时注入，而且需要后台的上传权限，所以利用起来比较困难。</p>
 <p><br></p>
-<h3 id="0x03-©��ԭ��"><a href="#0x03-©��ԭ��" class="headerlink" title="0x03 ©��ԭ��"></a>0x03 ©��ԭ��</h3><p>����WordPress��SQLi�ĺ�������������<code>sprintf</code>�У�<code>&#39;%s&#39;</code>��ǰһ��<code>&#39;</code>���Ե��ˣ�����������<code>sprintf</code>��<code>padding</code>����</p>
+<h3 id="0x03-漏洞原理"><a href="#0x03-漏洞原理" class="headerlink" title="0x03 漏洞原理"></a>0x03 漏洞原理</h3><p>上述WordPress的SQLi的核心问题在于在<code>sprintf</code>中，<code>&#39;%s&#39;</code>的前一个<code>&#39;</code>被吃掉了，这里利用了<code>sprintf</code>的<code>padding</code>功能</p>
 <p><img src="7.png" alt="7"></p>
-<p>�����ź���һ���ַ�����Ϊpadding�����ַ�����</p>
-<p>���⣬<code>sprintf</code>��������ʹ����������д��</p>
+<p>单引号后的一个字符会作为padding填充字符串。</p>
+<p>此外，<code>sprintf</code>函数可以使用下面这种写法</p>
 <p><img src="8.png" alt="8"></p>
-<p><strong>%</strong>�������ִ����ڼ���������<strong>$</strong>���������͡�</p>
-<p>���ԣ�payload<code>%1$&#39;%s&#39;</code>�е�<code>&#39;%</code>����Ϊʹ��<code>%</code>���� padding��������<code>&#39;</code>�����ݡ�</p>
+<p><strong>%</strong>后的数字代表第几个参数，<strong>$</strong>后代表类型。</p>
+<p>所以，payload<code>%1$&#39;%s&#39;</code>中的<code>&#39;%</code>被视为使用<code>%</code>进行 padding，导致了<code>&#39;</code>的逃逸。</p>
 <p><br></p>
-<h3 id="0x04-php��ʽ���ַ���"><a href="#0x04-php��ʽ���ַ���" class="headerlink" title="0x04 php��ʽ���ַ���"></a>0x04 php��ʽ���ַ���</h3><p>���ڲ��Թ����У��������������⡣php��<code>sprintf</code>��<code>vsprintf</code>�����Ը�ʽ�����ַ�����û�����顣</p>
-<p>���´����ǿ���ִ�еģ���Ȼphp��ʽ���ַ����в�������<code>%y</code>���ͣ���php���ᱨ����Ҳ��������<code>%y</code>����������Ϊ��</p>
+<h3 id="0x04-php格式化字符串"><a href="#0x04-php格式化字符串" class="headerlink" title="0x04 php格式化字符串"></a>0x04 php格式化字符串</h3><p>但在测试过程中，还发现其他问题。php的<code>sprintf</code>或<code>vsprintf</code>函数对格式化的字符类型没做检查。</p>
+<p>如下代码是可以执行的，显然php格式化字符串中并不存在<code>%y</code>类型，但php不会报错，也不会输出<code>%y</code>，而是输出为空</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$query = <span class="string">"%y"</span>;</div><div class="line">$args = <span class="string">'b'</span>;</div><div class="line"><span class="keyword">echo</span> sprintf( $query, $args ) ;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
-<p>ͨ��fuzz��֪����php�ĸ�ʽ���ַ����У�%����һ���ַ�(����<code>&#39;%&#39;</code>)�ᱻ�����ַ����ͣ������Ե���������<code>&#39;</code>��б��<code>\</code>Ҳ�����⡣</p>
-<p>��������ǰ��<code>%&#39; and 1=1#</code>ƴ����sql���䣬������SQLi���ˣ������Żᱻת����<code>\&#39;</code></p>
+<p>通过fuzz得知，在php的格式化字符串中，%后的一个字符(除了<code>&#39;%&#39;</code>)会被当作字符类型，而被吃掉，单引号<code>&#39;</code>，斜杠<code>\</code>也不例外。</p>
+<p>如果能提前将<code>%&#39; and 1=1#</code>拼接入sql语句，若存在SQLi过滤，单引号会被转义成<code>\&#39;</code></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username = <span class="string">'%\' and 1=1#'</span>;</div></pre></td></tr></table></figure>
-<p>Ȼ������sql������������������ʽ���ַ�����<code>\</code>�ᱻ<code>%</code>�Ե���<code>&#39;</code>�ɹ�����</p>
+<p>然后这句sql语句如果继续进入格式化字符串，<code>\</code>会被<code>%</code>吃掉，<code>&#39;</code>成功逃逸</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$sql = <span class="string">"select * from user where username = '%\' and 1=1#';"</span>;</div><div class="line">$args = <span class="string">"admin"</span>;</div><div class="line"><span class="keyword">echo</span> sprintf( $sql, $args ) ;</div><div class="line"><span class="comment">//result: select * from user where username = '' and 1=1#'</span></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
-<p>����������������<code>PHP Warning:  sprintf(): Too few arguments</code>�ı�����</p>
-<p>������ʹ��<code>%1$</code>�Ե�������б�ܣ��������𱨴���</p>
+<p>不过这样容易遇到<code>PHP Warning:  sprintf(): Too few arguments</code>的报错。</p>
+<p>还可以使用<code>%1$</code>吃掉后面的斜杠，而不引起报错。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$sql = <span class="string">"select * from user where username = '%1$\' and 1=1#' and password='%s';"</span>;</div><div class="line">$args = <span class="string">"admin"</span>;</div><div class="line"><span class="keyword">echo</span> sprintf( $sql, $args) ;</div><div class="line"><span class="comment">//result: select * from user where username = '' and 1=1#' and password='admin';</span></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
 <p><br></p>
-<p>ͨ������php��<a href="https://github.com/php/php-src/blob/master/ext/standard/formatted_print.c" target="_blank" rel="external">Դ��</a>����<code>ext/standard/formatted_print.c</code>��642��</p>
+<p>通过翻阅php的<a href="https://github.com/php/php-src/blob/master/ext/standard/formatted_print.c" target="_blank" rel="external">源码</a>，在<code>ext/standard/formatted_print.c</code>的642行</p>
 <p><img src="10.png" alt="10"></p>
-<p>���Է���php��<code>sprintf</code>��ʹ��switch..case..ʵ�֣�����δ֪������<code>default</code>��phpδ���κδ�����ֱ�����������Ե������������⡣</p>
-<p>��<a href="https://github.com/80vul/pasc2at" target="_blank" rel="external">�߼�php�������˼���</a>�е�5.3.5�У��ἰ��ʹ��<code>$order_sn=substr($_GET[&quot;order_sn&quot;], 1)</code>�ضϳԵ�<code>\</code>��<code>&quot;</code>��</p>
-<p>֮ǰҲ�й�����<a href="https://www.leavesongs.com/PENETRATION/mutibyte-sql-inject.html" target="_blank" rel="external">iconv</a>ת���ַ����룬<code>iconv(&#39;utf-8&#39;, &#39;gbk&#39;, $_GET[&#39;word&#39;])</code>��Ϊutf-8��gbk�ĳ��Ȳ�ͬ���Ե�<code>\</code>��</p>
-<p>���ߵ�����ͬ���������ַ����Ĵ��������Ե���<code>&#39;</code>��ת��ʧ�ܻ��������⣬�����뵽�����ַ��������������ܴ������Ƶ����⣬ֵ��ȥ����������</p>
+<p>可以发现php的<code>sprintf</code>是使用switch..case..实现，对于未知的类型<code>default</code>，php未做任何处理，直接跳过，所以导致了这个问题。</p>
+<p>在<a href="https://github.com/80vul/pasc2at" target="_blank" rel="external">高级php代码审核技术</a>中的5.3.5中，提及过使用<code>$order_sn=substr($_GET[&quot;order_sn&quot;], 1)</code>截断吃掉<code>\</code>或<code>&quot;</code>。</p>
+<p>之前也有过利用<a href="https://www.leavesongs.com/PENETRATION/mutibyte-sql-inject.html" target="_blank" rel="external">iconv</a>转化字符编码，<code>iconv(&#39;utf-8&#39;, &#39;gbk&#39;, $_GET[&#39;word&#39;])</code>因为utf-8和gbk的长度不同而吃掉<code>\</code>。</p>
+<p>几者的问题同样出现在字符串的处理，可以导致<code>&#39;</code>的转义失败或其他问题，可以想到其他字符串处理函数可能存在类似的问题，值得去继续发掘。</p>
 <p><br></p>
-<h3 id="0x05-��������"><a href="#0x05-��������" class="headerlink" title="0x05 ��������"></a>0x05 ��������</h3><ol>
-<li><p>ִ������ʹ��<code>sprintf</code>��<code>vsrptinf</code>����ƴ��</p>
+<h3 id="0x05-利用条件"><a href="#0x05-利用条件" class="headerlink" title="0x05 利用条件"></a>0x05 利用条件</h3><ol>
+<li><p>执行语句使用<code>sprintf</code>或<code>vsrptinf</code>进行拼接</p>
 </li>
-<li><p>ִ����������������ƴ�ӣ���һ��ƴ�ӵĲ������ݿɿأ��������´���</p>
+<li><p>执行语句进行了两次拼接，第一次拼接的参数内容可控，类似如下代码</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"></div><div class="line">$input = addslashes(<span class="string">"%1$' and 1=1#"</span>);</div><div class="line">$b = sprintf(<span class="string">"AND b='%s'"</span>, $input);</div><div class="line">...</div><div class="line">$sql = sprintf(<span class="string">"SELECT * FROM t WHERE a='%s' $b"</span>, <span class="string">'admin'</span>);</div><div class="line"><span class="keyword">echo</span> $sql;</div><div class="line"><span class="comment">//result: SELECT * FROM t WHERE a='admin' AND b=' ' and 1=1#'</span></div></pre></td></tr></table></figure>
 </li>
 </ol>
 <p><br></p>
-<h3 id="0x06-�ܽ�"><a href="#0x06-�ܽ�" class="headerlink" title="0x06 �ܽ�"></a>0x06 �ܽ�</h3><p>�˴�©���ĺ��Ļ���<code>sprintf</code>�����⣬ͬһ����������ƴ�ӣ���ζ�ſɿص����ݱ������˸�ʽ���ַ���������Ϊ<code>sprintf</code>�����Ĵ������⣬���յ���©���ķ�����</p>
-<p>�����������Ի�������WordPress�Ĳ�����ԭ�ĵ�������Ҳ�����ᵽ����Joomla�з��ֹ����Ƶ����⡣������ʹ��<code>sprintf</code>�����ַ���ƴ�ӵ�cms��ͬ���������˵���SQLע���ʹ���ִ�е�©����</p>
+<h3 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h3><p>此次漏洞的核心还是<code>sprintf</code>的问题，同一语句的两次拼接，意味着可控的内容被带进了格式化字符串，又因为<code>sprintf</code>函数的处理问题，最终导致漏洞的发生。</p>
+<p>此问题可能仍会出现在WordPress的插件，原文的评论中也有人提到曾在Joomla中发现过类似的问题。而其他使用<code>sprintf</code>进行字符串拼接的cms，同样可能因此导致SQL注入和代码执行等漏洞。</p>
 <p><br></p>
-<h3 id="0x07-�ο�����"><a href="#0x07-�ο�����" class="headerlink" title="0x07 �ο�����"></a>0x07 �ο�����</h3><p><a href="https://medium.com/websec/wordpress-sqli-bbb2afcc8e94" target="_blank" rel="external">https://medium.com/websec/wordpress-sqli-bbb2afcc8e94</a></p>
+<h3 id="0x07-参考链接"><a href="#0x07-参考链接" class="headerlink" title="0x07 参考链接"></a>0x07 参考链接</h3><p><a href="https://medium.com/websec/wordpress-sqli-bbb2afcc8e94" target="_blank" rel="external">https://medium.com/websec/wordpress-sqli-bbb2afcc8e94</a></p>
 <p><a href="https://medium.com/websec/wordpress-sqli-poc-f1827c20bf8e" target="_blank" rel="external">https://medium.com/websec/wordpress-sqli-poc-f1827c20bf8e</a></p>
 <p><a href="http://php.net/manual/zh/function.sprintf.php" target="_blank" rel="external">http://php.net/manual/zh/function.sprintf.php</a></p>
 <p><a href="https://github.com/php/php-src/blob/c8aa6f3a9a3d2c114d0c5e0c9fdd0a465dbb54a5/ext/standard/formatted_print.c" target="_blank" rel="external">https://github.com/php/php-src/blob/c8aa6f3a9a3d2c114d0c5e0c9fdd0a465dbb54a5/ext/standard/formatted_print.c</a></p>
@@ -223,8 +223,8 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;��WordPress-SQLi̸PHP��ʽ���ַ�������&quot;&gt;&lt;a href=&quot;#��WordPress-SQLi̸PHP��ʽ���ַ�������&quot; class=&quot;headerlink&quot; title=&quot;��WordPress SQLi̸PHP��ʽ���ַ�������&quot;&gt;&lt;/a&gt;��WordPress SQLi̸PHP��ʽ���ַ�������&lt;/h1&gt;&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;h3 id=&quot;0x00-����&quot;&gt;&lt;a href=&quot;#0x00-����&quot; class=&quot;headerlink&quot; title=&quot;0x00 ����&quot;&gt;&lt;/a&gt;0x00 ����&lt;/h3&gt;&lt;p&gt;���գ�WordPress������һ��&lt;a href=&quot;https://www.seebug.org/vuldb/ssvid-96376&quot;&gt;SQLi©��&lt;/a&gt;��©��������WP�ĺ�̨�ϴ�ͼƬ��λ�ã�ͨ���޸�ͼƬ�����ݿ��еĲ������Լ�����php��&lt;code&gt;sprintf&lt;/code&gt;���������ԣ���ɾ��ͼƬʱ������&lt;code&gt;&amp;#39;&lt;/code&gt;�����ŵ����ݡ�©�����ý�Ϊ���ѣ���˼·�ǳ�ֵ��ѧϰ��&lt;/p&gt;
+      &lt;h1 id=&quot;从WordPress-SQLi谈PHP格式化字符串问题&quot;&gt;&lt;a href=&quot;#从WordPress-SQLi谈PHP格式化字符串问题&quot; class=&quot;headerlink&quot; title=&quot;从WordPress SQLi谈PHP格式化字符串问题&quot;&gt;&lt;/a&gt;从WordPress SQLi谈PHP格式化字符串问题&lt;/h1&gt;&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;0x00-背景&quot;&gt;&lt;a href=&quot;#0x00-背景&quot; class=&quot;headerlink&quot; title=&quot;0x00 背景&quot;&gt;&lt;/a&gt;0x00 背景&lt;/h3&gt;&lt;p&gt;近日，WordPress爆出了一个&lt;a href=&quot;https://www.seebug.org/vuldb/ssvid-96376&quot;&gt;SQLi漏洞&lt;/a&gt;，漏洞发生在WP的后台上传图片的位置，通过修改图片在数据库中的参数，以及利用php的&lt;code&gt;sprintf&lt;/code&gt;函数的特性，在删除图片时，导致&lt;code&gt;&amp;#39;&lt;/code&gt;单引号的逃逸。漏洞利用较为困难，但思路非常值得学习。&lt;/p&gt;
 &lt;p&gt;&lt;br /&gt;&lt;br&gt;
     
     </summary>
