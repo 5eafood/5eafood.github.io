@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>tr-069 | SeaFood&#39;s blog</title>
+  <meta name="author" content="SeaFood">
+  
+  <meta name="description" content="TR-069协议简介TR069协议是宽带论坛 (broadband-forum) 制定的一个面向终端设备的网管协议，称为“用户终端设备广域网管理协议（CWMP，CPE Wan Management Protocol）”，文档编号为TR069，所以又称为TR069协议。
+CWMP协议广泛地被各国ISP（互联网服务供应商）采用， 用来对企业和个人用户的互联网设备如无线路由器， VoIP电话，机顶盒等进行远程管理。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="tr-069"/>
+  <meta property="og:site_name" content="SeaFood&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="SeaFood&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">SeaFood&#39;s blog</a></h1>
+  <h2><a href="/">es muss sein? es muss sein!</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-09-18T15:48:25.000Z"><a href="/2017/09/18/tr-069/">2017-09-18</a></time>
+      
+      
+  
+    <h1 class="title">tr-069</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h1 id="TR-069协议简介"><a href="#TR-069协议简介" class="headerlink" title="TR-069协议简介"></a>TR-069协议简介</h1><p>TR069协议是宽带论坛 (broadband-forum) 制定的一个面向终端设备的网管协议，称为<strong>“用户终端设备广域网管理协议（CWMP，CPE Wan Management Protocol）”</strong>，文档编号为TR069，所以又称为<strong>TR069协议</strong>。</p>
+<p>CWMP协议广泛地被各国ISP（互联网服务供应商）采用， 用来对企业和个人用户的互联网设备如无线路由器， VoIP电话，机顶盒等进行远程管理。</p>
+<a id="more"></a>
+<p><img src="1.png" alt="1"></p>
+<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><ul>
+<li>ACS：Auto-Configuration Server （自动配置服务器）</li>
+<li>CPE：Customer Premise Equipment（用户终端设备）</li>
+<li>CWMP：CPE WAN Management Protocol（用户终端设备广域网管理协议）</li>
+<li>RPC： Remote Procedure Call（远程过程调用）</li>
+<li>SOAP： Simple Object Access Protocol（简单对象访问协议）</li>
+<li>tr064： LAN side DSL CPE configuration（LAN侧DSL被管理设备设置协议）</li>
+</ul>
+<h2 id="CVE-2016-10372"><a href="#CVE-2016-10372" class="headerlink" title="CVE-2016-10372"></a><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-10372" target="_blank" rel="external">CVE-2016-10372</a></h2><p>此漏洞被mirai使用造成了德国的断网事件，漏洞成因是德国运营商使用的<strong>Eir’s D1000 Modem</strong>，将本该暴露在LAN侧的<strong>tr-064</strong>协议服务暴露在了WAN侧，并没做身份认证，导致命令执行，从而被。</p>
+<p><strong>tr-064</strong>与<strong>tr-069</strong>一同运行在7547端口，前者设计为在LAN上运行，而后者设计为在WAN侧运行。<strong>tr-064</strong>一个老版的不成熟的协议，目前只被使用在老设备上，新设备被 <strong>TR-064 Issue 2 </strong>替代。<br>所以说，此次的断网事件与<strong>tr-069</strong>并没关系，但许多报道将之归咎于此协议，算是背锅了。但<strong>tr-069</strong>使用广泛，之前也曾被爆出过漏洞，故十分有研究价值。</p>
+<h1 id="会话过程"><a href="#会话过程" class="headerlink" title="会话过程"></a>会话过程</h1><p><img src="2.png" alt="1"></p>
+<ol>
+<li>CWMP的通信通常由CPE端发起，ACS的地址被写在CPE的配置中，CPE会定时向该地址发送<code>Inform RPC</code>，报告自身状态和统计信息</li>
+<li>ACS收到后，如果开启了https，ACS应该使用<a href="http://blog.itpub.net/23071790/viewspace-709367/" target="_blank" rel="external">HTTP基础认证</a>，如果未使用https，则应使用<a href="http://blog.csdn.net/tenfyguo/article/details/8661517" target="_blank" rel="external">HTTP摘要认证</a>，认证成功后ACS会发送一个<code>InformResponse</code>，CPE收到后意味<code>Inform RPC</code>完成</li>
+<li>如果CPE需要继续RPC，方法如上，如果不需要，则发送一个空的HTTP POST给ACS结束RPC</li>
+<li>之后轮到ACS进行RPC，例如使用<code>GetParameterValues RPC</code>获取CPE上一些参数的值</li>
+<li>CPE通过HTTP POST将结果返回给ACS</li>
+<li>ACS同CPE发送一个空的HTTP POST给CPE结束PRC</li>
+<li>会话结束</li>
+</ol>
+<h1 id="Connection-Request"><a href="#Connection-Request" class="headerlink" title="Connection Request"></a>Connection Request</h1><p>从上可知，通常会话是由CPE发起的，但有时，ACS需要主动联系CPE，为了实现这个目的，CWMP提供了<code>Connection Request</code>这个机制，允许ACS激活CPE发起一个会话。</p>
+<ol>
+<li>由ACS发出CPE随机生成的一个 URL 发送一个简单的HTTP GET请求</li>
+<li>ACS需要通过CPE的HTTP 摘要认证</li>
+<li>通过认证后，CPE会返回<code>200 OK or 204 &quot;No Content&quot;</code>，表示连接建立成功</li>
+</ol>
+<h1 id="SOAP"><a href="#SOAP" class="headerlink" title="SOAP"></a>SOAP</h1><p>CWMP使用<a href="http://www.w3school.com.cn/soap/soap_intro.asp" target="_blank" rel="external">SOAP</a>（简单对象访问协议）进行RPC。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span><span class="meta">?&gt;</span></span></div><div class="line"><span class="tag">&lt;<span class="name">soap:Envelope</span> <span class="attr">xmlns:soap</span>=<span class="string">"http://schemas.xmlsoap.org/soap/envelope/"</span> <span class="attr">xmlns:cwmp</span>=<span class="string">"urn:dslforum-org:cwmp-1-1"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">soap:Header</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">cwmp:ID</span> <span class="attr">soap-env:mustUnderstand</span>=<span class="string">"1"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">cwmp:ID</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">soap:Header</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">soap:Body</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">cwmp:Reboot</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">CommandKey</span>&gt;</span>4321<span class="tag">&lt;/<span class="name">CommandKey</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">cwmp:Reboot</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">soap:Fault</span>&gt;</span><span class="tag">&lt;/<span class="name">soap:Fault</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">soap:Body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">soap:Envelope</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>必需的 Envelope 元素，可把此 XML 文档标识为一条 SOAP 消息，命名空间 <code>xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</code>，这是SOAP的固定格式</p>
+<p>在CWMP中，也存在不同的版本，所以引入命名空间<code>xmlns:cwmp=&quot;urn:dslforum-org:cwmp-1-1</code>，表示使用那一版的CWMP</p>
+<p>可选的 Header 元素，包含头部信息，在CWMP中用来存放，ID (标记一对requests和response)，会话超时时间，版本信息等</p>
+<p>必需的 Body 元素，包含所有的调用和响应信息，包含具体RPC方法和参数，如上的SOAP功能即使Reboot</p>
+<p>可选的 Fault 元素，提供有关在处理此消息所发生错误的信息</p>
+<h1 id="CPE的RPC"><a href="#CPE的RPC" class="headerlink" title="CPE的RPC"></a>CPE的RPC</h1><ol>
+<li><p>GetRPCMethods    </p>
+<p>获取支持的RPC方法</p>
+</li>
+<li><p>SetParameterValues      </p>
+<p>设置CPE的参数       </p>
+<p>key: ParameterList  value: ParameterValueStruct (name, value)      </p>
+<p>key: ParameterKey value: string</p>
+</li>
+<li><p>GetParameterValues          </p>
+<p>获取CPE的参数         </p>
+<p>key: ParameterNames value: string</p>
+</li>
+<li><p>GetParameterNames        </p>
+<p>获取CPE的参数名    </p>
+<p>key: ParameterPath value: string     </p>
+<p>key: NextLevel value: boolean 若为假，需要返回路径下所有参数，为真，则只返回该路劲下一层参数</p>
+</li>
+<li><p>SetParameterAttributes    </p>
+<p>设置CPE的参数属性       </p>
+<p>key: ParameterList value: SetParameterAttributesStruct     SetParameterAttributesStruct:     </p>
+<p>Name,    </p>
+<p>NotificationChange boolean 是否修改预警内容，   </p>
+<p>Notification int[0:6] 当参数被修改时是否通知ACS, 0为不通知, 1-6代表不同的相应级别      </p>
+<p>AccessListChange boolean 是否修改访问列表<br>AccessList string 定义写权限(write access) 0表示只有ACS可写, “Subscriber”表示   </p>
+<blockquote>
+<p>Indicates write access by an interface controlled on the subscriber LAN. Includes any and all such LAN-side mechanisms, which MAY include but are not limited to TR-064 (LAN-side DSL CPE<br>Configuration Protocol), UPnP, the device’s user interface, clientside telnet, and client-side SNMP.</p>
+</blockquote>
+</li>
+<li><p>GetParameterAttributes      </p>
+<p>获取CPE的参数属性     </p>
+<p>key: ParameterNames string     </p>
+<p>key: ParameterList value:SetParameterAttributesStruct     </p>
+</li>
+<li><p>AddObject</p>
+<p>创造一个多实例对象的新实例( create a new instance of a Multi-Instance<br>Object)     </p>
+<p>key: ObjectName value: string      </p>
+<p>key: ParameterKey value: string</p>
+</li>
+<li><p>DeleteObject<br>删除一个对象的实例    </p>
+<p>key: ObjectName value: string      </p>
+<p>key: ParameterKey value: string</p>
+</li>
+<li><p>Download<br>让CPE去指定URL下载文件<br>key: FileType value: string           </p>
+<p>key: URL  value: string          </p>
+<p>key: Username  value: string  用于文件服务器认证           </p>
+<p>key: Password  value: string           </p>
+<p>key: FileSize value: unsignedInt           </p>
+<p>key: TargetFileName value: string<br>key: DelaySeconds  value:unsignedInt 用于延迟下载</p>
+</li>
+<li><p>Reboot<br>重启<br>key: CommandKey value: string</p>
+</li>
+</ol>
+<h1 id="Data-Models"><a href="#Data-Models" class="headerlink" title="Data Models"></a>Data Models</h1><p><a href="https://www.broadband-forum.org/standards-and-software/technical-specifications/tr-069-files-tools" target="_blank" rel="external"><strong>Data Models</strong></a>（数据模型）由一个个不同的<strong>objects</strong> （对象）和<strong>object</strong>对应的<strong>sub-objects</strong>（子对象）和 <strong>parameters</strong>（参数）组成。</p>
+<p><strong>Data Models</strong>使用由类似树型的点分层关系组织起来。树干为需要配置的对象，树叶为具体的配置参数，所有配置参数都一些属性，例如是否可读写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">InternetGatewayDevice.ManagementServer.ConnectionRequestURL</div></pre></td></tr></table></figure>
+<p>这条规定了CPE的URL，<code>InternetGatewayDevice</code>为根节点，<code>ManagementServer</code>为<strong>object</strong>，<code>ConnectionRequestURL</code>为<strong>parameter</strong></p>
+<p>CWMP最初设计时，被使用在家用路由器和网关设备，所以根结点为<code>InternetGatewayDevice</code>。现在CWMP扩展可管理其他设备，便设计了新的根节点为<code>Device</code>，如今使用的主要是<code>Device:2</code>。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.qacafe.com/tr-069-training/session-overview/" target="_blank" rel="external">https://www.qacafe.com/tr-069-training/session-overview/</a></p>
+<p><a href="https://www.broadband-forum.org/technical/download/TR-069.pdf" target="_blank" rel="external">https://www.broadband-forum.org/technical/download/TR-069.pdf</a></p>
+<p><a href="http://www.h3c.com/cn/Products___Technology/Technology/ComwareV5/System_Management/Other_technology/Technology_recommend/200805/606261_30003_0.htm" target="_blank" rel="external">http://www.h3c.com/cn/Products___Technology/Technology/ComwareV5/System_Management/Other_technology/Technology_recommend/200805/606261_30003_0.htm</a></p>
+<p><a href="http://blog.csdn.net/Dreamcode/article/details/3864715" target="_blank" rel="external">http://blog.csdn.net/Dreamcode/article/details/3864715</a></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Kommentare</h1>
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 SeaFood
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+</body>
+</html>
