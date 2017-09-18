@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://5eafood.github.io/"/>
-  <updated>2017-05-27T18:00:03.000Z</updated>
+  <updated>2017-09-18T15:41:08.000Z</updated>
   <id>https://5eafood.github.io/</id>
   
   <author>
@@ -14,6 +14,105 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>php_format_string</title>
+    <link href="https://5eafood.github.io/2017/09/18/php-format-string/"/>
+    <id>https://5eafood.github.io/2017/09/18/php-format-string/</id>
+    <published>2017-09-18T15:35:58.000Z</published>
+    <updated>2017-09-18T15:41:08.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="��WordPress-SQLi̸PHP��ʽ���ַ�������"><a href="#��WordPress-SQLi̸PHP��ʽ���ַ�������" class="headerlink" title="��WordPress SQLi̸PHP��ʽ���ַ�������"></a>��WordPress SQLi̸PHP��ʽ���ַ�������</h1><p><br></p>
+<h3 id="0x00-����"><a href="#0x00-����" class="headerlink" title="0x00 ����"></a>0x00 ����</h3><p>���գ�WordPress������һ��<a href="https://www.seebug.org/vuldb/ssvid-96376" target="_blank" rel="external">SQLi©��</a>��©��������WP�ĺ�̨�ϴ�ͼƬ��λ�ã�ͨ���޸�ͼƬ�����ݿ��еĲ������Լ�����php��<code>sprintf</code>���������ԣ���ɾ��ͼƬʱ������<code>&#39;</code>�����ŵ����ݡ�©�����ý�Ϊ���ѣ���˼·�ǳ�ֵ��ѧϰ��</p>
+<p><br><br><a id="more"></a></p>
+<h3 id="0x01-©������"><a href="#0x01-©������" class="headerlink" title="0x01 ©������"></a>0x01 ©������</h3><p>©��������<strong>wp-admin/upload.php</strong>��157�У�����ɾ�����ܣ�</p>
+<p><img src="3.png" alt="3"></p>
+<p>֮�����뺯��<code>wp_delete_attachment( $post_id_del )</code>��<strong>$post_id_del</strong>�ɿأ�����û����<strong>(int)</strong>��ʽת��������</p>
+<p><br></p>
+<p><strong>wp_delete_attachment</strong>λ��<code>wp-includes\post.php</code>�� 4863 �С�����</p>
+<p><img src="4.png" alt="4"></p>
+<p>ͼƬ��post_id��������ѯ��<strong>$wpdb-&gt;prepare</strong>��ʹ����<strong>sprintf</strong>�������Զ�������ת������������<code>22 payload</code>���ᱻת��Ϊ<code>22</code>�����������ƹ���</p>
+<p><br></p>
+<p>֮������4898�е�<code>delete_metadata( &#39;post&#39;, null, &#39;_thumbnail_id&#39;, $post_id, true );</code>������</p>
+<p><strong>delete_metadata</strong>����λ��<code>wp-includes\meta.php</code>��307�У�</p>
+<p><img src="5.png" alt="5"></p>
+<p>����������ƴ�ӳ�������sql���䣬<strong>meta_value</strong>Ϊ������<strong>media</strong>����</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> meta_id <span class="keyword">FROM</span> wp_postmeta <span class="keyword">WHERE</span> meta_key = <span class="string">'_thumbnail_id'</span> <span class="keyword">AND</span> meta_value = <span class="string">'payload'</span></div></pre></td></tr></table></figure>
+<p>֮������������������ѯ������Ϊ���������ܼ���������Ҫ�޸�<strong>_thumbnail_id</strong>��Ӧ��<strong>meta_value</strong>��ֵΪpayload����֤�в�ѯ������</p>
+<p>���ˣ�������Ҫ�ϴ�һ��ͼƬ������<code>д����</code>������Ϊ<strong>��ɫͼƬ</strong>��</p>
+<p>�����ݿ���<code>wp_postmeta</code>���п��Կ�����<code>_thumbnail_id</code>������ɫͼƬ�趨��ֵ����Ӧ��<strong>meta_value</strong>��ͼƬ��<strong>post_id</strong>��</p>
+<p><img src="1.png" alt="1"></p>
+<p>ԭ��ͨ��һ�� WP&lt;4.7.5 �汾��xmlrpc©���޸�<code>_thumbnail_id</code>��Ӧ<strong>meta_value</strong>��ֵ����ͨ������<code>importer</code>�޸ġ�����ֱ�������ݿ����޸ģ��޸�Ϊ���ǵ�payload��</p>
+<p><br></p>
+<p>֮����365�У��˴�����©���ĺ��ģ��������ڴ���ʹ��������<code>sprintf</code>ƴ�����䣬���¿ɿص�payload�����˵ڶ��ε�<code>sprintf</code>������payloadΪ<code>22 %1$%s hello</code></p>
+<p><img src="9.png" alt="9"></p>
+<p>������ƴ�ӳ�sql���䣬����<strong>$wpdb-&gt;prepare</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> post_id <span class="keyword">FROM</span> wp_postmeta <span class="keyword">WHERE</span> meta_key = <span class="string">'%s'</span>  <span class="keyword">AND</span> meta_value = <span class="string">'22 %1$%s hello'</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<p>����<strong>$wpdb-&gt;prepare</strong>�󣬴����Ὣ����<code>%s</code>ת��Ϊ<code>&#39;%s&#39;</code>����<code>meta_value = &#39;22 %1$&#39;%s&#39; hello&#39;</code></p>
+<p><img src="6.png" alt="2"></p>
+<p>��Ϊ<strong>sprintf</strong>������ (vsprintf��sprintf����) ��<code>&#39;%s&#39;</code>��ǰһ��<code>&#39;</code>�ᱻ�Ե���<code>%1$&#39;%s</code>����ʽ��Ϊ_thumbnail_id ��������ʽ���ַ�������������������</p>
+<p><img src="2.png" alt="2"></p>
+<p>�����ųɹ����ݣ�</p>
+<p>����payloadΪ</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://localhost/wp-admin/upload.php?action=delete&amp;media[]=22%20%251%24%25s%20hello&amp;_wpnonce=bbba5b9cd3</div></pre></td></tr></table></figure>
+<p>����SQLע�벻�ᱨ����ֻ��ʹ����ʱע�룬������Ҫ��̨���ϴ�Ȩ�ޣ��������������Ƚ����ѡ�</p>
+<p><br></p>
+<h3 id="0x03-©��ԭ��"><a href="#0x03-©��ԭ��" class="headerlink" title="0x03 ©��ԭ��"></a>0x03 ©��ԭ��</h3><p>����WordPress��SQLi�ĺ�������������<code>sprintf</code>�У�<code>&#39;%s&#39;</code>��ǰһ��<code>&#39;</code>���Ե��ˣ�����������<code>sprintf</code>��<code>padding</code>����</p>
+<p><img src="7.png" alt="7"></p>
+<p>�����ź���һ���ַ�����Ϊpadding�����ַ�����</p>
+<p>���⣬<code>sprintf</code>��������ʹ����������д��</p>
+<p><img src="8.png" alt="8"></p>
+<p><strong>%</strong>�������ִ����ڼ���������<strong>$</strong>���������͡�</p>
+<p>���ԣ�payload<code>%1$&#39;%s&#39;</code>�е�<code>&#39;%</code>����Ϊʹ��<code>%</code>���� padding��������<code>&#39;</code>�����ݡ�</p>
+<p><br></p>
+<h3 id="0x04-php��ʽ���ַ���"><a href="#0x04-php��ʽ���ַ���" class="headerlink" title="0x04 php��ʽ���ַ���"></a>0x04 php��ʽ���ַ���</h3><p>���ڲ��Թ����У��������������⡣php��<code>sprintf</code>��<code>vsprintf</code>�����Ը�ʽ�����ַ�����û�����顣</p>
+<p>���´����ǿ���ִ�еģ���Ȼphp��ʽ���ַ����в�������<code>%y</code>���ͣ���php���ᱨ����Ҳ��������<code>%y</code>����������Ϊ��</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$query = <span class="string">"%y"</span>;</div><div class="line">$args = <span class="string">'b'</span>;</div><div class="line"><span class="keyword">echo</span> sprintf( $query, $args ) ;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>ͨ��fuzz��֪����php�ĸ�ʽ���ַ����У�%����һ���ַ�(����<code>&#39;%&#39;</code>)�ᱻ�����ַ����ͣ������Ե���������<code>&#39;</code>��б��<code>\</code>Ҳ�����⡣</p>
+<p>��������ǰ��<code>%&#39; and 1=1#</code>ƴ����sql���䣬������SQLi���ˣ������Żᱻת����<code>\&#39;</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> username = <span class="string">'%\' and 1=1#'</span>;</div></pre></td></tr></table></figure>
+<p>Ȼ������sql������������������ʽ���ַ�����<code>\</code>�ᱻ<code>%</code>�Ե���<code>&#39;</code>�ɹ�����</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$sql = <span class="string">"select * from user where username = '%\' and 1=1#';"</span>;</div><div class="line">$args = <span class="string">"admin"</span>;</div><div class="line"><span class="keyword">echo</span> sprintf( $sql, $args ) ;</div><div class="line"><span class="comment">//result: select * from user where username = '' and 1=1#'</span></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>����������������<code>PHP Warning:  sprintf(): Too few arguments</code>�ı�����</p>
+<p>������ʹ��<code>%1$</code>�Ե�������б�ܣ��������𱨴���</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$sql = <span class="string">"select * from user where username = '%1$\' and 1=1#' and password='%s';"</span>;</div><div class="line">$args = <span class="string">"admin"</span>;</div><div class="line"><span class="keyword">echo</span> sprintf( $sql, $args) ;</div><div class="line"><span class="comment">//result: select * from user where username = '' and 1=1#' and password='admin';</span></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<p>ͨ������php��<a href="https://github.com/php/php-src/blob/master/ext/standard/formatted_print.c" target="_blank" rel="external">Դ��</a>����<code>ext/standard/formatted_print.c</code>��642��</p>
+<p><img src="10.png" alt="10"></p>
+<p>���Է���php��<code>sprintf</code>��ʹ��switch..case..ʵ�֣�����δ֪������<code>default</code>��phpδ���κδ�����ֱ�����������Ե������������⡣</p>
+<p>��<a href="https://github.com/80vul/pasc2at" target="_blank" rel="external">�߼�php�������˼���</a>�е�5.3.5�У��ἰ��ʹ��<code>$order_sn=substr($_GET[&quot;order_sn&quot;], 1)</code>�ضϳԵ�<code>\</code>��<code>&quot;</code>��</p>
+<p>֮ǰҲ�й�����<a href="https://www.leavesongs.com/PENETRATION/mutibyte-sql-inject.html" target="_blank" rel="external">iconv</a>ת���ַ����룬<code>iconv(&#39;utf-8&#39;, &#39;gbk&#39;, $_GET[&#39;word&#39;])</code>��Ϊutf-8��gbk�ĳ��Ȳ�ͬ���Ե�<code>\</code>��</p>
+<p>���ߵ�����ͬ���������ַ����Ĵ��������Ե���<code>&#39;</code>��ת��ʧ�ܻ��������⣬�����뵽�����ַ��������������ܴ������Ƶ����⣬ֵ��ȥ����������</p>
+<p><br></p>
+<h3 id="0x05-��������"><a href="#0x05-��������" class="headerlink" title="0x05 ��������"></a>0x05 ��������</h3><ol>
+<li><p>ִ������ʹ��<code>sprintf</code>��<code>vsrptinf</code>����ƴ��</p>
+</li>
+<li><p>ִ����������������ƴ�ӣ���һ��ƴ�ӵĲ������ݿɿأ��������´���</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"></div><div class="line">$input = addslashes(<span class="string">"%1$' and 1=1#"</span>);</div><div class="line">$b = sprintf(<span class="string">"AND b='%s'"</span>, $input);</div><div class="line">...</div><div class="line">$sql = sprintf(<span class="string">"SELECT * FROM t WHERE a='%s' $b"</span>, <span class="string">'admin'</span>);</div><div class="line"><span class="keyword">echo</span> $sql;</div><div class="line"><span class="comment">//result: SELECT * FROM t WHERE a='admin' AND b=' ' and 1=1#'</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><br></p>
+<h3 id="0x06-�ܽ�"><a href="#0x06-�ܽ�" class="headerlink" title="0x06 �ܽ�"></a>0x06 �ܽ�</h3><p>�˴�©���ĺ��Ļ���<code>sprintf</code>�����⣬ͬһ����������ƴ�ӣ���ζ�ſɿص����ݱ������˸�ʽ���ַ���������Ϊ<code>sprintf</code>�����Ĵ������⣬���յ���©���ķ�����</p>
+<p>�����������Ի�������WordPress�Ĳ�����ԭ�ĵ�������Ҳ�����ᵽ����Joomla�з��ֹ����Ƶ����⡣������ʹ��<code>sprintf</code>�����ַ���ƴ�ӵ�cms��ͬ���������˵���SQLע���ʹ���ִ�е�©����</p>
+<p><br></p>
+<h3 id="0x07-�ο�����"><a href="#0x07-�ο�����" class="headerlink" title="0x07 �ο�����"></a>0x07 �ο�����</h3><p><a href="https://medium.com/websec/wordpress-sqli-bbb2afcc8e94" target="_blank" rel="external">https://medium.com/websec/wordpress-sqli-bbb2afcc8e94</a></p>
+<p><a href="https://medium.com/websec/wordpress-sqli-poc-f1827c20bf8e" target="_blank" rel="external">https://medium.com/websec/wordpress-sqli-poc-f1827c20bf8e</a></p>
+<p><a href="http://php.net/manual/zh/function.sprintf.php" target="_blank" rel="external">http://php.net/manual/zh/function.sprintf.php</a></p>
+<p><a href="https://github.com/php/php-src/blob/c8aa6f3a9a3d2c114d0c5e0c9fdd0a465dbb54a5/ext/standard/formatted_print.c" target="_blank" rel="external">https://github.com/php/php-src/blob/c8aa6f3a9a3d2c114d0c5e0c9fdd0a465dbb54a5/ext/standard/formatted_print.c</a></p>
+<p><a href="https://www.seebug.org/vuldb/ssvid-96376" target="_blank" rel="external">https://www.seebug.org/vuldb/ssvid-96376</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;��WordPress-SQLi̸PHP��ʽ���ַ�������&quot;&gt;&lt;a href=&quot;#��WordPress-SQLi̸PHP��ʽ���ַ�������&quot; class=&quot;headerlink&quot; title=&quot;��WordPress SQLi̸PHP��ʽ���ַ�������&quot;&gt;&lt;/a&gt;��WordPress SQLi̸PHP��ʽ���ַ�������&lt;/h1&gt;&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;h3 id=&quot;0x00-����&quot;&gt;&lt;a href=&quot;#0x00-����&quot; class=&quot;headerlink&quot; title=&quot;0x00 ����&quot;&gt;&lt;/a&gt;0x00 ����&lt;/h3&gt;&lt;p&gt;���գ�WordPress������һ��&lt;a href=&quot;https://www.seebug.org/vuldb/ssvid-96376&quot;&gt;SQLi©��&lt;/a&gt;��©��������WP�ĺ�̨�ϴ�ͼƬ��λ�ã�ͨ���޸�ͼƬ�����ݿ��еĲ������Լ�����php��&lt;code&gt;sprintf&lt;/code&gt;���������ԣ���ɾ��ͼƬʱ������&lt;code&gt;&amp;#39;&lt;/code&gt;�����ŵ����ݡ�©�����ý�Ϊ���ѣ���˼·�ǳ�ֵ��ѧϰ��&lt;/p&gt;
+&lt;p&gt;&lt;br /&gt;&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>uwp</title>
